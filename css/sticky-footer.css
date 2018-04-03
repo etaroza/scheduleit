@@ -26,13 +26,15 @@ body {
     padding-bottom: 12px;
 }
 
-/*.form-control[type="email"]{*/
-    /*width : 90%;*/
-    /*!*margin-bottom: 10px;*!*/
-/*}*/
+.scroll-spy {
+    position: relative;
+    height: 400px;
+    overflow: auto;
+    margin-top: .5rem;
+}
 
-/*button {*/
-    /*width: 10%;*/
-    /*!*float: left;*!*/
-    /*!*margin-left: 10%;*!*/
-/*}*/
+.events {
+    position: relative;
+    padding: 1rem;
+    margin: 1rem -15px 0;
+}

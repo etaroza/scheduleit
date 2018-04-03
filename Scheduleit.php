@@ -37,7 +37,6 @@ class Scheduleit
 
         $eventList = $this->eventList();
 
-
         $explodeOwnerIds = [];
 
         foreach ($eventList["owners"] as $key => $value) {
@@ -67,12 +66,12 @@ class Scheduleit
 
             if (count($zurichRoom) == 0) {
                 $message =
-                    "<b>" . $eventList["startEndTime"][$i] . " " . $language[$i] . " " .
+                    "<b>" . $eventList["date"][$i] . " " . $eventList["startEndTime"][$i] . " " . $language[$i] . " " .
                     $course[$i] . " " . $intensity[$i] . "</b> | Winterthur - " . $mode[$i] . " - " .
                     $eventList["title"][$i] . "<br><b>" . $winterthurRoom[$i] . "</b>: " . $customer[$i] . "<br>";
             } else {
                 $message =
-                    "<b>" . $eventList["startEndTime"][$i] . " " . $language[$i] . " " .
+                    "<b>" . $eventList["date"][$i] . " " .$eventList["startEndTime"][$i] . " " . $language[$i] . " " .
                     $course[$i] . " " . $intensity[$i] . "</b> | Zurich - " . $mode[$i] . " - " .
                     $eventList["title"][$i] . "<br><b>" . $zurichRoom[$i] . "</b>: " . $customer[$i] . "<br>";
             }
@@ -81,6 +80,12 @@ class Scheduleit
 
         }
 
+//        $messagesWithDates = array(
+//            "message" => $messages,
+//            "month" => $eventList["month"]
+//        );
+
+//        return $messagesWithDates;
         return $messages;
     }
 
@@ -119,6 +124,123 @@ class Scheduleit
             $key = 0;
         }
         return $result;
+    }
+
+    function eventList()
+    {
+        $teacherId = $this->getSingleTeacherData()["id"];
+
+        try{
+            $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&limit=$this->limit&sort=date_start";
+            $eventDataResponse = $this->apiCall($eventDataEndpoint);
+
+            $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];
+        } catch (Exception $e) {
+            echo "Error while performing API call: " . $e;
+            die;
+        }
+
+        $eventId = [];
+        $eventTitle = [];
+        $eventStartEndTime = [];
+        $eventDates = [];
+        $eventDateEnd = [];
+        $eventMonths = [];
+        $eventOwners = [];
+
+        foreach ($eventData as $value) {
+            array_push($eventId, $value["id"]);
+            array_push($eventTitle, $value["title"]);
+
+            $startTime = new DateTime($value["date_start"]);
+            $endTime = new DateTime($value["date_end"]);
+            $startEndTime = $startTime->format("H:i") . " - " .
+                $endTime->format("H:i");
+            array_push($eventStartEndTime, $startEndTime);
+
+            $date = $startTime->format("o-m-d");
+            array_push($eventDates, $date);
+
+            $month = $startTime->format("F");
+            array_push($eventMonths, $month);
+
+            array_push($eventDateEnd, $value["date_end"]);
+
+            array_push($eventOwners, $value["owner"]);
+        }
+        unset($value);
+
+        //remove commas at the beginning and end of owner string
+        //(,1039,810,205,819,) to (1039,810,205,819)
+        foreach ($eventOwners as $key => $value){
+            if ( ($value[0] == ",") && (substr($value, -1) == ",") ) {
+                $removeCommaAtStartAndEnd = substr($value, 1, -1);
+                $eventOwners[$key] = $removeCommaAtStartAndEnd;
+            }
+        }
+        unset($value);
+
+        $uniqueMonths = array_unique($eventMonths, SORT_REGULAR);
+
+        $eventDetails = array(
+            "amountOfEvents" => count($eventData),
+            "id" => $eventId,
+            "title" => $eventTitle,
+            "dateEnd" => $eventDateEnd,
+            "startEndTime" => $eventStartEndTime,
+            "date" => $eventDates,
+            "month" => $eventMonths,
+            "uniqueMonth" => $uniqueMonths,
+            "owners" => $eventOwners
+        );
+
+        return $eventDetails;
+    }
+
+    function getSingleTeacherData()
+    {
+        $teacherTypedInEmail = $_GET["email"];
+
+        $resources = $this->resourceList["teachers"];
+
+        $teacherKeyInList = array_search($teacherTypedInEmail, array_column($resources, "email"));
+
+        if ($teacherKeyInList != null) {
+            $teacherId = $resources[$teacherKeyInList]["id"];
+            $teacherName = $resources[$teacherKeyInList]["name"];
+            $teacherEmail = $resources[$teacherKeyInList]["email"];
+
+            $singleTeacherData = array(
+                "id" => $teacherId,
+                "name" => $teacherName,
+                "email" => $teacherEmail
+            );
+
+            return $singleTeacherData;
+        } else {
+            return null;
+        }
+    }
+
+    function populateResourceArrays($valueOwner, $groupId, $resourceArray, $value)
+    {
+        if (substr($valueOwner, 1, -1) === $groupId) {
+            if ($value["email"] == "") {
+                $tempArray = array(
+                    "id" => $value["id"],
+                    "name" => $value["name"]
+                );
+            } else {
+                $tempArray = array(
+                    "id" => $value["id"],
+                    "name" => $value["name"],
+                    "email" => $value["email"]
+                );
+            }
+            array_push($resourceArray, $tempArray);
+        }
+
+        return $resourceArray;
     }
 
     function groupList()
@@ -197,105 +319,6 @@ class Scheduleit
         );
 
         return $resourceData;
-    }
-
-    function populateResourceArrays($valueOwner, $groupId, $resourceArray, $value)
-    {
-        if (substr($valueOwner, 1, -1) === $groupId) {
-            if ($value["email"] == "") {
-                $tempArray = array(
-                    "id" => $value["id"],
-                    "name" => $value["name"]
-                );
-            } else {
-                $tempArray = array(
-                    "id" => $value["id"],
-                    "name" => $value["name"],
-                    "email" => $value["email"]
-                );
-            }
-            array_push($resourceArray, $tempArray);
-        }
-
-        return $resourceArray;
-    }
-
-    function eventList()
-    {
-        $teacherId = $this->getSingleTeacherData()["id"];
-
-        try{
-            $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&limit=$this->limit&sort=date_start";
-            $eventDataResponse = $this->apiCall($eventDataEndpoint);
-
-            $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];
-        } catch (Exception $e) {
-            echo "Error while performing API call: " . $e;
-            die;
-        }
-
-        $eventId = [];
-        $eventTitle = [];
-        $eventStartEndTime = [];
-        $eventOwners = [];
-
-        foreach ($eventData as $value) {
-            array_push($eventId, $value["id"]);
-            array_push($eventTitle, $value["title"]);
-
-            $startEndTime = date("H:i", strtotime($value["date_start"])) . " - " .
-                date("H:i", strtotime($value["date_end"]));
-
-            array_push($eventStartEndTime, $startEndTime);
-            array_push($eventOwners, $value["owner"]);
-        }
-        unset($value);
-
-        //remove commas at the begginning and end of owner string
-        //(,1039,810,205,819,) to (1039,810,205,819)
-        foreach ($eventOwners as $key => $value){
-            if ( ($value[0] == ",") && (substr($value, -1) == ",") ) {
-                $removeCommaAtStartAndEnd = substr($value, 1, -1);
-                $eventOwners[$key] = $removeCommaAtStartAndEnd;
-            }
-        }
-        unset($value);
-
-
-        $eventDetails = array(
-            "amountOfEvents" => count($eventData),
-            "id" => $eventId,
-            "title" => $eventTitle,
-            "startEndTime" => $eventStartEndTime,
-            "owners" => $eventOwners
-        );
-
-        return $eventDetails;
-    }
-
-    function getSingleTeacherData()
-    {
-        $teacherTypedInEmail = $_GET["email"];
-
-        $resources = $this->resourceList["teachers"];
-
-        $teacherKeyInList = array_search($teacherTypedInEmail, array_column($resources, "email"));
-
-        if ($teacherKeyInList != null) {
-            $teacherId = $resources[$teacherKeyInList]["id"];
-            $teacherName = $resources[$teacherKeyInList]["name"];
-            $teacherEmail = $resources[$teacherKeyInList]["email"];
-
-            $singleTeacherData = array(
-                "id" => $teacherId,
-                "name" => $teacherName,
-                "email" => $teacherEmail
-            );
-
-            return $singleTeacherData;
-        } else {
-            return null;
-        }
     }
 
     private function apiCall($endpoint)

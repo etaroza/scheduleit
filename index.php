@@ -34,42 +34,87 @@
                 </form>
                 <br><br>
             </div>
+        </div>
 
+        <div class="row">
             <div class="col-sm-12">
                 <?php
-                    if (isset($_GET["email"])) {
+                if (isset($_GET["email"])) {
 
-                        $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
-                        $singleTeacherData = $data->getSingleTeacherData();
-                        $events = $data->prepareTeacherEventsData();
+                    $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
+                    $singleTeacherData = $data->getSingleTeacherData();
+                    $events = $data->prepareTeacherEventsData();
+                    $eventsMonth = $data->eventList()["month"];
+//                    $eventsMonth = $data->prepareTeacherEventsData()["month"];
+                    $uniqueMonth = $data->eventList()["uniqueMonth"];
+                    $month = $data->eventList()["month"];
+                    $dateEnd = $data->eventList()["dateEnd"];
+                    $currentDate = new DateTime();
 
-                        if ($singleTeacherData == null) {
-                ?>
-                             <div id="noTeacher" class="alert alert-danger" role="alert">
-                                Can not find teacher by that email.
-                             </div>
-                <?php
-                        } elseif (count($events) == 0) {
-                ?>
-                            <div id="noEvents" class="alert alert-warning" role="alert">
-                                This teacher has no scheduled events.
+                    if ($singleTeacherData == null) {
+                        ?>
+                        <div id="noTeacher" class="alert alert-danger" role="alert">
+                            Can not find teacher by that email.
+                        </div>
+                        <?php
+                    } elseif (count($events) == 0) {
+                        ?>
+                        <div id="noEvents" class="alert alert-warning" role="alert">
+                            This teacher has no scheduled events.
+                        </div>
+                        <?php
+                    } else {
+                        ?>
+
+                        <div class="events">
+                            <nav id="navbar-example2" class="navbar navbar-light bg-light">
+                                <ul class="nav nav-pills">
+                                    <?php
+                                        foreach ($uniqueMonth as $value) {
+                                    ?>
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
+                                            </li>
+                                    <?php
+                                        }
+                                        unset($value);
+                                    ?>
+                                </ul>
+                            </nav>
+
+                            <div class="scroll-spy" data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+                                <?php
+                                    foreach ($uniqueMonth as $value) {
+                                ?>
+                                        <div id="<?php echo $value?>">
+                                            <h4><?php echo $value?></h4>
+
+                                            <?php
+                                                for ($i = 0; $i < count($events); $i++) {
+                                                    if ($eventsMonth[$i] == $value) {
+                                                        if ($currentDate > new DateTime($dateEnd[$i])) {
+                                                            ?>
+                                                                <p class="text-muted separator"><?php echo $events[$i] ?></p>
+                                                            <?php
+                                                        } else {
+                                                            ?>
+                                                                <p class="separator"><?php echo $events[$i] ?></p>
+                                                            <?php
+                                                        }
+                                                    }
+                                                }
+                                                unset($innerValue2);
+                                            ?>
+                                        </div>
+                                <?php
+                                    }
+                                    unset($value);
+                                ?>
                             </div>
+                        </div>
                 <?php
-                        } else {
-                ?>
-                            <div class="events">
-                <?php
-                                foreach ($events as $value) {
-                ?>
-                                    <p class="separator"><?php echo $value?></p>
-                <?php
-                                }
-                                unset($value);
-                ?>
-                            </div>
-                <?php
-                        }
                     }
+                }
                 ?>
             </div>
         </div>
@@ -80,5 +125,9 @@
         <span class="text-muted">I am just a footer</span>
       </div>
     </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>
 </html>
