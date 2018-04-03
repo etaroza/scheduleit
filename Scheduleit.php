@@ -66,13 +66,13 @@ class Scheduleit
 
             if (count($zurichRoom) == 0) {
                 $message =
-                    "<b>" . $eventList["date"][$i] . " " . $eventList["startEndTime"][$i] . " " . $language[$i] . " " .
-                    $course[$i] . " " . $intensity[$i] . "</b> | Winterthur - " . $mode[$i] . " - " .
+                    "<span class='font-weight-bold'>" . $eventList["date"][$i] . " " . $eventList["startEndTime"][$i] . " " . $language[$i] . " " .
+                    $course[$i] . " " . $intensity[$i] . "</span> | Winterthur - " . $mode[$i] . " - " .
                     $eventList["title"][$i] . "<br><b>" . $winterthurRoom[$i] . "</b>: " . $customer[$i] . "<br>";
             } else {
                 $message =
-                    "<b>" . $eventList["date"][$i] . " " .$eventList["startEndTime"][$i] . " " . $language[$i] . " " .
-                    $course[$i] . " " . $intensity[$i] . "</b> | Zurich - " . $mode[$i] . " - " .
+                    "<span class='font-weight-bold'>" . $eventList["date"][$i] . " " .$eventList["startEndTime"][$i] . " " . $language[$i] . " " .
+                    $course[$i] . " " . $intensity[$i] . "</span> | Zurich - " . $mode[$i] . " - " .
                     $eventList["title"][$i] . "<br><b>" . $zurichRoom[$i] . "</b>: " . $customer[$i] . "<br>";
             }
 
@@ -80,12 +80,6 @@ class Scheduleit
 
         }
 
-//        $messagesWithDates = array(
-//            "message" => $messages,
-//            "month" => $eventList["month"]
-//        );
-
-//        return $messagesWithDates;
         return $messages;
     }
 

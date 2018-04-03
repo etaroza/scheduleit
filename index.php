@@ -43,9 +43,9 @@
 
                     $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
                     $singleTeacherData = $data->getSingleTeacherData();
+
                     $events = $data->prepareTeacherEventsData();
                     $eventsMonth = $data->eventList()["month"];
-//                    $eventsMonth = $data->prepareTeacherEventsData()["month"];
                     $uniqueMonth = $data->eventList()["uniqueMonth"];
                     $month = $data->eventList()["month"];
                     $dateEnd = $data->eventList()["dateEnd"];
@@ -103,7 +103,6 @@
                                                         }
                                                     }
                                                 }
-                                                unset($innerValue2);
                                             ?>
                                         </div>
                                 <?php
@@ -119,12 +118,6 @@
             </div>
         </div>
     </main>
-
-    <footer class="footer">
-      <div class="container">
-        <span class="text-muted">I am just a footer</span>
-      </div>
-    </footer>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
