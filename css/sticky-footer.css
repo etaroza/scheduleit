@@ -33,6 +33,11 @@ body {
     margin-top: .5rem;
 }
 
+#navbar-months {
+    height: 400px;
+    margin-top: .5rem;
+}
+
 .events {
     position: relative;
     padding: 1rem;

@@ -23,7 +23,7 @@
     <!-- Begin page content -->
     <main role="main" class="container">
         <div class="row">
-            <div class="col-sm-7">
+            <div class="col-7">
                 <h1 class="mt-5">Type in teachers email</h1>
                 <br><br>
                 <form action="" method="get">
@@ -37,7 +37,7 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-12">
                 <?php
                 if (isset($_GET["email"])) {
 
@@ -62,60 +62,62 @@
                         <div id="noEvents" class="alert alert-warning" role="alert">
                             This teacher has no scheduled events.
                         </div>
+            </div>
+        </div>
                         <?php
                     } else {
                         ?>
-
-                        <div class="events">
-                            <nav id="navbar-example2" class="navbar navbar-light bg-light">
-                                <ul class="nav nav-pills">
-                                    <?php
-                                        foreach ($uniqueMonth as $value) {
-                                    ?>
-                                            <li class="nav-item">
+        <div class="events">
+                        <div class="row">
+                            <div class="col-2">
+                                <nav id="navbar-months" class="navbar navbar-light bg-light flex-column">
+                                    <nav class="nav nav-pills flex-column">
+                                        <?php
+                                            foreach ($uniqueMonth as $value) {
+                                        ?>
                                                 <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
-                                            </li>
+                                        <?php
+                                            }
+                                            unset($value);
+                                        ?>
+                                    </nav>
+                                </nav>
+                            </div>
+                            <div class="col-10">
+                                <div class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="0">
                                     <?php
-                                        }
-                                        unset($value);
-                                    ?>
-                                </ul>
-                            </nav>
-
-                            <div class="scroll-spy" data-spy="scroll" data-target="#navbar-example2" data-offset="0">
-                                <?php
                                     foreach ($uniqueMonth as $value) {
-                                ?>
+                                        ?>
                                         <div id="<?php echo $value?>">
                                             <h4><?php echo $value?></h4>
 
                                             <?php
-                                                for ($i = 0; $i < count($events); $i++) {
-                                                    if ($eventsMonth[$i] == $value) {
-                                                        if ($currentDate > new DateTime($dateEnd[$i])) {
-                                                            ?>
-                                                                <p class="text-muted separator"><?php echo $events[$i] ?></p>
-                                                            <?php
-                                                        } else {
-                                                            ?>
-                                                                <p class="separator"><?php echo $events[$i] ?></p>
-                                                            <?php
-                                                        }
+                                            for ($i = 0; $i < count($events); $i++) {
+                                                if ($eventsMonth[$i] == $value) {
+                                                    if ($currentDate > new DateTime($dateEnd[$i])) {
+                                                        ?>
+                                                        <p class="text-muted separator"><?php echo $events[$i] ?></p>
+                                                        <?php
+                                                    } else {
+                                                        ?>
+                                                        <p class="separator"><?php echo $events[$i] ?></p>
+                                                        <?php
                                                     }
                                                 }
+                                            }
                                             ?>
                                         </div>
-                                <?php
+                                        <?php
                                     }
                                     unset($value);
-                                ?>
+                                    ?>
+                                </div>
                             </div>
                         </div>
                 <?php
                     }
                 }
                 ?>
-            </div>
         </div>
     </main>
 
