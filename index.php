@@ -22,10 +22,10 @@
   <body>
     <!-- Begin page content -->
     <main role="main" class="container">
-        <div class="row">
-            <div class="col-12 col-sm-10 col-lg-7">
-                <h1 class="mt-5">Type in teachers email</h1>
-                <br><br>
+        <div class="row jumbotron no-border-radius">
+            <div class="mx-auto col-12 col-sm-10 col-lg-7">
+                <h1 class="display-4">Type in teachers email</h1>
+                <hr class="my-4">
                 <form action="" method="get">
                     <div class="form-group">
                         <input type="email" name="email" class="form-control" id="teacherEmail" aria-describedby="teacherEmail" placeholder="name@example.com" required>
@@ -120,6 +120,12 @@
                 ?>
         </div>
     </main>
+
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">I am just a footer</span>
+        </div>
+    </footer>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
