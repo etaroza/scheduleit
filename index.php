@@ -23,7 +23,7 @@
     <!-- Begin page content -->
     <main role="main" class="container">
         <div class="row">
-            <div class="col-7">
+            <div class="col-12 col-sm-10 col-lg-7">
                 <h1 class="mt-5">Type in teachers email</h1>
                 <br><br>
                 <form action="" method="get">
@@ -69,7 +69,7 @@
                         ?>
         <div class="events">
                         <div class="row">
-                            <div class="col-2">
+                            <div class="col-4 col-sm-3 col-lg-2">
                                 <nav id="navbar-months" class="navbar navbar-light bg-light flex-column">
                                     <nav class="nav nav-pills flex-column">
                                         <?php
@@ -83,7 +83,7 @@
                                     </nav>
                                 </nav>
                             </div>
-                            <div class="col-10">
+                            <div class="col-8 col-sm-9 col-lg-10">
                                 <div class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="0">
                                     <?php
                                     foreach ($uniqueMonth as $value) {
