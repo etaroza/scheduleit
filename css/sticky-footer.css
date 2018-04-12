@@ -1,25 +1,24 @@
-/* Sticky footer styles
--------------------------------------------------- */
 html, body {
     /*position: relative;*/
     min-height: 100%;
 }
+
 body {
     /*min-height: 100%;*/
     height: 100%;
     /*margin-bottom: 60px; !* Margin bottom by footer height *!*/
 }
+
+main .row {
+    margin-bottom: 3rem;
+}
+
 .footer {
     position: fixed;
     bottom: 0;
     width: 100%;
     height: 60px;
 }
-
-
-/* Custom page CSS
--------------------------------------------------- */
-/* Not required for template or sticky footer method. */
 
 .separator {
     border-bottom: 2px solid #ced4da;
@@ -50,10 +49,10 @@ body {
     border-radius: 0;
 }
 
-.fixed-to-bottom {
-    position: fixed;
-    bottom: 0;
-}
+/*.fixed-to-bottom {*/
+    /*position: fixed;*/
+    /*bottom: 0;*/
+/*}*/
 
 @media only screen and (max-width: 576px){
     .padding-left-right-0 {
