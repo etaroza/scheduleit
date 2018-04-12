@@ -19,7 +19,7 @@
     <!-- Custom styles for this template -->
     <link href="css/sticky-footer.css" rel="stylesheet">
   </head>
-  <body>
+  <body class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="220">
     <!-- Begin page content -->
     <main role="main" class="container">
         <?php if (!isset($_GET["email"])) { ?>
@@ -72,9 +72,9 @@
                     </div>
                 </div>
             <?php } else { ?>
-            <div class="row row-no-gutters events">
+            <div class="row row-no-gutters">
                 <div class="col-12">
-                    <div class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="0">
+                    <div id="events">
                         <?php foreach ($uniqueMonth as $value) { ?>
                             <div id="<?php echo $value?>">
                                 <h4><?php echo $value?></h4>
@@ -92,27 +92,25 @@
                         <?php } unset($value);  ?>
                     </div>
                 </div>
-                <div class="col-12 padding-left-right-0">
-                    <nav id="navbar-months" class="navbar navbar-light bg-light">
-                        <ul class="nav nav-pills">
-                            <?php foreach ($uniqueMonth as $value) { ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
-                                </li>
-                            <?php } unset($value); ?>
-                        </ul>
-                    </nav>
-                </div>
             </div>
-        <?php }
-            } ?>
     </main>
 
     <footer class="footer">
-        <div class="container">
-            <span class="text-muted">I am just a footer</span>
+        <div class="container padding-left-right-0">
+            <nav id="navbar-months" class="navbar navbar-light bg-light">
+                <ul class="nav nav-pills">
+                    <?php foreach ($uniqueMonth as $value) { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
+                        </li>
+                    <?php } unset($value); ?>
+                </ul>
+            </nav>
         </div>
     </footer>
+
+    <?php }
+    } ?>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
