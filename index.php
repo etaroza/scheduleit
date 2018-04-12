@@ -22,103 +22,90 @@
   <body>
     <!-- Begin page content -->
     <main role="main" class="container">
-        <div class="row jumbotron no-border-radius">
-            <div class="mx-auto col-12 col-sm-10 col-lg-7">
-                <h1 class="display-4">Type in teachers email</h1>
-                <hr class="my-4">
+        <?php if (!isset($_GET["email"])) { ?>
+            <div class="row jumbotron border-radius-0 row-no-gutters">
+                <div class="mx-auto col-12 col-sm-10 col-lg-7">
+                    <h1 class="display-4">Type in teachers email</h1>
+                    <hr class="my-4">
+        <?php } else { ?>
+            <div class="row jumbotron border-radius-0 row-no-gutters">
+                <div class="mx-auto col-12 col-sm-10 col-lg-7">
+        <?php } ?>
                 <form action="" method="get">
                     <div class="form-group">
                         <input type="email" name="email" class="form-control" id="teacherEmail" aria-describedby="teacherEmail" placeholder="name@example.com" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
+                <?php if (!isset($_GET["email"])) { ?>
                 <br><br>
+                <?php } ?>
             </div>
+
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <?php
-                if (isset($_GET["email"])) {
+        <?php if (isset($_GET["email"])) {
+            $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
+            $singleTeacherData = $data->getSingleTeacherData();
 
-                    $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
-                    $singleTeacherData = $data->getSingleTeacherData();
+            $events = $data->prepareTeacherEventsData();
+            $eventsMonth = $data->eventList()["month"];
+            $uniqueMonth = $data->eventList()["uniqueMonth"];
+            $month = $data->eventList()["month"];
+            $dateEnd = $data->eventList()["dateEnd"];
+            $currentDate = new DateTime();
 
-                    $events = $data->prepareTeacherEventsData();
-                    $eventsMonth = $data->eventList()["month"];
-                    $uniqueMonth = $data->eventList()["uniqueMonth"];
-                    $month = $data->eventList()["month"];
-                    $dateEnd = $data->eventList()["dateEnd"];
-                    $currentDate = new DateTime();
-
-                    if ($singleTeacherData == null) {
-                        ?>
+            if ($singleTeacherData == null) { ?>
+                <div class="row">
+                    <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
                             Can not find teacher by that email.
                         </div>
-                        <?php
-                    } elseif (count($events) == 0) {
-                        ?>
+                    </div>
+                </div>
+            <?php } elseif (count($events) == 0) { ?>
+                <div class="row">
+                    <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noEvents" class="alert alert-warning" role="alert">
                             This teacher has no scheduled events.
                         </div>
-            </div>
-        </div>
-                        <?php
-                    } else {
-                        ?>
-        <div class="events">
-                        <div class="row">
-                            <div class="col-4 col-sm-3 col-lg-2">
-                                <nav id="navbar-months" class="navbar navbar-light bg-light flex-column">
-                                    <nav class="nav nav-pills flex-column">
-                                        <?php
-                                            foreach ($uniqueMonth as $value) {
-                                        ?>
-                                                <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
-                                        <?php
-                                            }
-                                            unset($value);
-                                        ?>
-                                    </nav>
-                                </nav>
-                            </div>
-                            <div class="col-8 col-sm-9 col-lg-10">
-                                <div class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="0">
-                                    <?php
-                                    foreach ($uniqueMonth as $value) {
-                                        ?>
-                                        <div id="<?php echo $value?>">
-                                            <h4><?php echo $value?></h4>
-
+                    </div>
+                </div>
+            <?php } else { ?>
+            <div class="row row-no-gutters events">
+                <div class="col-12">
+                    <div class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="0">
+                        <?php foreach ($uniqueMonth as $value) { ?>
+                            <div id="<?php echo $value?>">
+                                <h4><?php echo $value?></h4>
+                                <?php for ($i = 0; $i < count($events); $i++) {
+                                    if ($eventsMonth[$i] == $value) {
+                                        if ($currentDate > new DateTime($dateEnd[$i])) { ?>
+                                            <p class="text-muted separator"><?php echo $events[$i] ?></p>
+                                        <?php } else { ?>
+                                            <p class="separator"><?php echo $events[$i] ?></p>
                                             <?php
-                                            for ($i = 0; $i < count($events); $i++) {
-                                                if ($eventsMonth[$i] == $value) {
-                                                    if ($currentDate > new DateTime($dateEnd[$i])) {
-                                                        ?>
-                                                        <p class="text-muted separator"><?php echo $events[$i] ?></p>
-                                                        <?php
-                                                    } else {
-                                                        ?>
-                                                        <p class="separator"><?php echo $events[$i] ?></p>
-                                                        <?php
-                                                    }
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                        <?php
+                                        }
                                     }
-                                    unset($value);
-                                    ?>
-                                </div>
+                                } ?>
                             </div>
-                        </div>
-                <?php
-                    }
-                }
-                ?>
-        </div>
+                        <?php } unset($value);  ?>
+                    </div>
+                </div>
+                <div class="col-12 padding-left-right-0">
+                    <nav id="navbar-months" class="navbar navbar-light bg-light">
+                        <ul class="nav nav-pills">
+                            <?php foreach ($uniqueMonth as $value) { ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
+                                </li>
+                            <?php } unset($value); ?>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        <?php }
+            } ?>
     </main>
 
     <footer class="footer">
