@@ -1,5 +1,6 @@
 <?php
 
+
 class Scheduleit
 {
     private $limit = "1000";
@@ -52,6 +53,8 @@ class Scheduleit
         $winterthurRoomTemp = $this->searchInArray($explodeOwnerIds, $winterthurRoomList);
         $customerTemp = $this->searchInArray($explodeOwnerIds, $customerList);
 
+        $customerTemp = $this->shortenNames($customerTemp);
+
         $language = $this->implode($languageTemp);
         $course = $this->implode($courseTemp);
         $intensity = $this->implode($intensityTemp);
@@ -83,6 +86,44 @@ class Scheduleit
         return $messages;
     }
 
+    /**
+     * Shortens name from Name Surename to Name S.
+     */
+    function shortenNames($array)
+    {
+        $temp = array();
+
+        foreach ($array as $key => $value) {
+
+            foreach ($value as $innerKey => $nameString) {
+
+                $wordByWord = explode(" ", $nameString);
+                $tempStr = "";
+
+                foreach ($wordByWord as $name) {
+
+                    if( ($name != reset($wordByWord)) &&
+                        ctype_upper(mb_substr($name, 0, 1, 'utf-8')) ) {
+                        $tempStr .= mb_substr($name, 0, 1, 'utf-8') . ". ";
+                    } else {
+                        $tempStr .= $name . " ";
+                    }
+
+                }
+
+                $removedSpaceAtEnd = rtrim($tempStr);
+                array_push($temp, $removedSpaceAtEnd);
+
+            }
+
+            $array[$key] = array_replace($value, $temp);
+            $temp = array();
+
+        }
+
+        return $array;
+    }
+
     function implode($resource)
     {
         foreach ($resource as $key => $value) {
@@ -110,13 +151,14 @@ class Scheduleit
                 $searchForResource = array_search($explodeOwnerIds[$i][$j], array_column($resourceList, "id"));
 
                 if ($searchForResource !== false) {
-                    $result[$i][$key] = $resourceList[$searchForResource]["name"];
+                    $result[$i][$key] = trim($resourceList[$searchForResource]["name"]);
                     $key++;
                 }
 
             }
             $key = 0;
         }
+
         return $result;
     }
 
