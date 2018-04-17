@@ -279,42 +279,18 @@ class Scheduleit
         return $resourceArray;
     }
 
-    function groupList()
-    {
-        try{
-            $groupListEndpoint = "groups?fields=id,name";
-            $groupListResponse = $this->apiCall($groupListEndpoint);
-
-            $groupListData = $groupListResponse["_embedded"]["groups"]["_embedded"]["data"];
-        } catch (Exception $e) {
-            echo "Error while performing API call: " . $e;
-            die;
-        }
-
-        foreach ($groupListData as $value) {
-            array_push($resourceId, $value["id"]);
-            array_push($resourceName, $value["name"]);
-            array_push($resourceEmail, $value["email"]);
-            array_push($resourceOwner, $value["owner"]);
-        }
-        unset($value);
-
-        $groupId = [];
-        $groupName = [];
-
-        $groupData = array(
-            "id" => $groupId,
-            "name" => $groupName
-        );
-
-        return $groupData;
-    }
-
     function getResourceList()
     {
         try{
             $resourceListEndpoint = "resources?fields=id,name,email,owner&limit=$this->limit";
             $resourceListResponse = $this->apiCall($resourceListEndpoint);
+
+            /**
+             * if too many requests, return status code
+             */
+            if ($resourceListResponse["status_code"] === "429") {
+                return $resourceListResponse["status_code"];
+            }
 
             $resourceListData = $resourceListResponse["_embedded"]["resources"]["_embedded"]["data"];
         } catch (Exception $e) {

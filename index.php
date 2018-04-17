@@ -56,7 +56,15 @@
             $dateEnd = $data->eventList()["dateEnd"];
             $currentDate = new DateTime();
 
-            if ($singleTeacherData == null) { ?>
+            if ($data->getResourceList() === "429") { ?>
+                <div class="row">
+                    <div class="col-12 col-sm-10 col-lg-7">
+                        <div id="noTeacher" class="alert alert-danger" role="alert">
+                            Scheduling service is currently unavailable, try again later.
+                        </div>
+                    </div>
+                </div>
+            <?php } elseif ($singleTeacherData == null) { ?>
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
