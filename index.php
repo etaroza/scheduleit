@@ -111,16 +111,24 @@
                                                     <div class="col-4 col-sm-3 event-date-and-time">
                                                         <h2>
                                                         <?php if (!($j > 0)) { ?>
-                                                            <span class="event-day-hours">
-                                                                <span>
-                                                                    <?php echo date("l", strtotime($events[$i][$j][0]))
-                                                                        . " " . $events[$i][$j][1] ?>
-                                                                </span>
-                                                            </span>
                                                             <span class="event-numerical-day-month">
                                                                 <span>
                                                                     <?php echo date("d", strtotime($events[$i][$j][0]))
                                                                         . " " . date("M", strtotime($events[$i][$j][0])) ?>
+                                                                </span>
+                                                            </span>
+                                                            <span class="event-day-hours">
+                                                                <span>
+                                                                    <?php echo date("l", strtotime($events[$i][$j][0])) ?>
+                                                                </span>
+                                                                <span>
+                                                                    <?php echo $events[$i][$j][1] ?>
+                                                                </span>
+                                                            </span>
+                                                        <?php } else { ?>
+                                                            <span class="event-day-hours">
+                                                                <span>
+                                                                    <?php echo $events[$i][$j][1] ?>
                                                                 </span>
                                                             </span>
                                                         <?php } ?>
