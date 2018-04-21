@@ -16,7 +16,8 @@ class Scheduleit
     private $userId;
     private $username;
     private $password;
-    private $resourceList = [];
+    private $resourceList = array();
+    private $eventList = array();
 
     public function __construct($userId, $username, $password)
     {
@@ -24,6 +25,21 @@ class Scheduleit
         $this->username = $username;
         $this->password = $password;
         $this->resourceList = $this->getResourceList();
+        $this->eventList = $this->eventList();
+    }
+
+    /**
+     * For minimising eventList() calls
+     */
+    function getDataFromEventList()
+    {
+        $data = array();
+
+        foreach ($this->eventList as $key => $value) {
+            $data[$key] = $value;
+        }
+
+        return $data;
     }
 
     function prepareTeacherEventsData()
@@ -36,11 +52,9 @@ class Scheduleit
         $winterthurRoomList = $this->resourceList["winterthurRooms"];
         $customerList = $this->resourceList["customers"];
 
-        $eventList = $this->eventList();
-
         $explodeOwnerIds = [];
 
-        foreach ($eventList["owners"] as $key => $value) {
+        foreach ($this->getDataFromEventList()["owners"] as $key => $value) {
             array_push($explodeOwnerIds, explode(',', $value));
         }
         unset($value);
@@ -63,37 +77,81 @@ class Scheduleit
         $winterthurRoom = $this->implode($winterthurRoomTemp);
         $customer = $this->implode($customerTemp);
 
-        $messages = [];
+        $groupMessagesByDate = $this->groupMessagesByDate($this->getDataFromEventList()["date"], $language, $course,
+            $intensity, $mode, $zurichRoom, $winterthurRoom, $customer);
 
-        for ($i = 0; $i < $eventList["amountOfEvents"]; $i++) {
+        return $groupMessagesByDate;
+    }
 
-            if (count($zurichRoom) == 0) {
-                $message =
-                    "<span class='font-weight-bold'>" . $eventList["date"][$i] . " " . $eventList["startEndTime"][$i] . " " . $language[$i] . " " .
-                    $course[$i] . " " . $intensity[$i] . "</span> | Winterthur - " . $mode[$i] . " - " .
-                    $eventList["title"][$i] . "<br><b>" . $winterthurRoom[$i] . "</b>: " . $customer[$i] . "<br>";
-            } else {
-                $message =
-                    "<span class='font-weight-bold'>" . $eventList["date"][$i] . " " .$eventList["startEndTime"][$i] . " " . $language[$i] . " " .
-                    $course[$i] . " " . $intensity[$i] . "</span> | Zurich - " . $mode[$i] . " - " .
-                    $eventList["title"][$i] . "<br><b>" . $zurichRoom[$i] . "</b>: " . $customer[$i] . "<br>";
-            }
+    function reorganizeEventMonths($groupMessagesByDate)
+    {
+        $reorganizedEventMonths = array();
 
-            array_push($messages, $message);
-
+        foreach ($groupMessagesByDate as $array) {
+            $reorganizedEventMonths[] = date("F", strtotime($array[0][0]));
         }
 
-        return $messages;
+        return $reorganizedEventMonths;
+    }
+
+    function groupMessagesByDate($dates, $language, $course,
+                                 $intensity, $mode, $zurichRoom, $winterthurRoom, $customer)
+    {
+        $uniqueDates = array_unique($dates);
+
+        $groupedDates = array();
+
+        /**
+         * keys for multidimensional array
+         */
+        $i = 0;
+        $j = 0;
+
+        foreach ($uniqueDates as $uniqueDate) {
+
+            foreach ($dates as $key => $date) {
+
+                if($uniqueDate == $date) {
+
+                    $groupedDates[$i][$j][] = $date;
+                    $groupedDates[$i][$j][] = $this->getDataFromEventList()["startEndTime"][$key];
+                    $groupedDates[$i][$j][] = $language[$key];
+                    $groupedDates[$i][$j][] = $course[$key];
+                    $groupedDates[$i][$j][] = $intensity[$key];
+                    $groupedDates[$i][$j][] = $mode[$key];
+                    $groupedDates[$i][$j][] = $this->getDataFromEventList()["title"][$key];
+
+                    if (count($zurichRoom) == 0) {
+                        $groupedDates[$i][$j][] = "Winterthur";
+                        $groupedDates[$i][$j][] = $winterthurRoom[$key];
+                    } else {
+                        $groupedDates[$i][$j][] = "Zurich";
+                        $groupedDates[$i][$j][] = $zurichRoom[$key];
+                    };
+
+                    $groupedDates[$i][$j][] = $customer[$key];
+
+                    $j++;
+                }
+
+            }
+
+            $i++;
+            $j = 0;
+        }
+
+        return $groupedDates;
     }
 
     /**
      * Shortens name from Name Surename to Name S.
      */
-    function shortenNames($array)
+    function shortenNames($customerTemp)
     {
         $temp = array();
+        $customersWithShortSurnames = array();
 
-        foreach ($array as $key => $value) {
+        foreach ($customerTemp as $key => $value) {
 
             foreach ($value as $innerKey => $nameString) {
 
@@ -116,12 +174,12 @@ class Scheduleit
 
             }
 
-            $array[$key] = array_replace($value, $temp);
+            $customersWithShortSurnames[$key] = array_replace($value, $temp);
             $temp = array();
 
         }
 
-        return $array;
+        return $customersWithShortSurnames;
     }
 
     function implode($resource)

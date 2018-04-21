@@ -1,68 +1,16 @@
 html, body {
-    /*position: relative;*/
     min-height: 100%;
 }
 
 body {
-    /*min-height: 100%;*/
     height: 100%;
-    /*margin-bottom: 60px; !* Margin bottom by footer height *!*/
 }
-
-main .row {
-    margin-bottom: 3rem;
-}
-
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
-}
-
-.separator {
-    border-bottom: 2px solid #ced4da;
-    padding-bottom: 12px;
-}
-
-.scroll-spy {
-    position: relative;
-    /*height: 400px;*/
-    /*overflow: auto;*/
-    /*margin-top: .5rem;*/
-}
-
-#navbar-months {
-    background-color: #e9ecef !important;
-    height: 60px;
-}
-
-#events {
-    padding-bottom: 60px;
-}
-
-#events div div:nth-child(1) {
-    padding-right: 0;
-}
-
-.border-radius-0 {
-    border-radius: 0;
-}
-
-/*.fixed-to-bottom {*/
-    /*position: fixed;*/
-    /*bottom: 0;*/
-/*}*/
 
 @media only screen and (max-width: 576px){
     .padding-left-right-0 {
         padding-right: 0;
         padding-left: 0;
     }
-}
-
-.after-submit {
-    padding: 2rem 1rem;
 }
 
 @media only screen and (min-width: 576px) {
@@ -75,4 +23,79 @@ main .row {
         padding-right: 0;
         padding-left: 0;
     }
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+}
+
+.separator {
+    border-bottom: 1px solid #ced4da;
+    margin-top: .6rem;
+    padding-bottom: .6rem;
+}
+
+.scroll-spy {
+    position: relative;
+}
+
+#navbar-months {
+    background-color: #e9ecef !important;
+    height: 60px;
+}
+
+#events {
+    padding-bottom: 60px;
+}
+
+.border-radius-0 {
+    border-radius: 0;
+}
+
+.after-submit {
+    padding: 2rem 1rem;
+}
+
+.event-date-and-time {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: .2rem;
+}
+
+.event-date-and-time h2 {
+    font-weight: normal;
+    font-size: 1rem;
+}
+
+.event-date-and-time h2 span, .event-details span {
+    display: block;
+}
+
+.event-numerical-day-month {
+    font-size: 1.2rem;
+}
+
+.event-details {
+    font-weight: 500;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.event-details:hover {
+    background-color: rgba(0,0,0,.04);
+}
+
+.separator .row {
+    margin: .3rem 0;
+    padding: .2rem 0;
+}
+
+.separator .row div:nth-child(2) {
+    padding-left: 0;
+    padding-right: 0;
 }

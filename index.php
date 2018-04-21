@@ -50,13 +50,17 @@
             $singleTeacherData = $data->getSingleTeacherData();
 
             $events = $data->prepareTeacherEventsData();
-            $eventsMonth = $data->eventList()["month"];
-            $uniqueMonth = $data->eventList()["uniqueMonth"];
-            $month = $data->eventList()["month"];
-            $dateEnd = $data->eventList()["dateEnd"];
+            $eventsMonth = $data->getDataFromEventList()["month"];
+            $eventsDates = $data->getDataFromEventList()["date"];
+            $uniqueMonth = $data->getDataFromEventList()["uniqueMonth"];
+            $amountOfEvents = $data->getDataFromEventList()["amountOfEvents"];
+            $month = $data->getDataFromEventList()["month"];
+            $dateEnd = $data->getDataFromEventList()["dateEnd"];
             $currentDate = new DateTime();
 
-            if ($data->getResourceList() === "429") { ?>
+            $reorganizedEventMonths = $data->reorganizeEventMonths($events);
+
+        if ($data->getResourceList() === "429") { ?>
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
@@ -88,17 +92,76 @@
                             <div id="<?php echo $value?>">
                                 <h4><?php echo $value?></h4>
                                 <?php for ($i = 0; $i < count($events); $i++) {
-                                    if ($eventsMonth[$i] == $value) {
-                                        if ($currentDate > new DateTime($dateEnd[$i])) { ?>
-                                            <p class="text-muted separator"><?php echo $events[$i] ?></p>
-                                        <?php } else { ?>
-                                            <p class="separator"><?php echo $events[$i] ?></p>
-                                            <?php
-                                        }
-                                    }
+                                    /**
+                                     * [0] - date (2018-07-17)
+                                     * [1] - hours (17:30 - 19:00)
+                                     * [2] - language (German(DE))
+                                     * [3] - course (TALK B1-B2)
+                                     * [4] - intensity (Standard (90x2x12))
+                                     * [5] - mode (Small Group (max. 5))
+                                     * [6] - title (G1243)
+                                     * [7] - String "Zurich" or "Winterthur"
+                                     * [8] - room (Room 2)
+                                     * [9] - customers (Nicolas V., Vlaemynck J.)
+                                     */
+                                    if ($reorganizedEventMonths[$i] == $value) { ?>
+                                        <div class="separator">
+                                             <?php for ($j = 0; $j < count($events[$i]); $j++) { ?>
+                                                <div class="row">
+                                                    <div class="col-4 col-sm-3 event-date-and-time">
+                                                        <h2>
+                                                        <?php if (!($j > 0)) { ?>
+                                                            <span class="event-day-hours">
+                                                                <span>
+                                                                    <?php echo date("l", strtotime($events[$i][$j][0]))
+                                                                        . " " . $events[$i][$j][1] ?>
+                                                                </span>
+                                                            </span>
+                                                            <span class="event-numerical-day-month">
+                                                                <span>
+                                                                    <?php echo date("d", strtotime($events[$i][$j][0]))
+                                                                        . " " . date("M", strtotime($events[$i][$j][0])) ?>
+                                                                </span>
+                                                            </span>
+                                                        <?php } ?>
+                                                        </h2>
+                                                    </div>
+                                                    <?php if ($currentDate > new DateTime($dateEnd[$i])) { ?>
+                                                        <div class="col-8 col-sm-9">
+                                                            <div class="event-details text-muted">
+                                                                <span>
+                                                                    <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
+                                                                        $events[$i][$j][4] . " | " . $events[$i][$j][7] . " - " .
+                                                                        $events[$i][$j][5] . " - " . $events[$i][$j][6]
+                                                                    ?>
+                                                                </span>
+                                                                <span>
+                                                                    <?php echo $events[$i][$j][8] . ": " . $events[$i][$j][9] ?>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <?php } else { ?>
+                                                        <div class="col-8 col-sm-9">
+                                                            <div class="event-details">
+                                                                <span>
+                                                                    <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
+                                                                        $events[$i][$j][4] . " | " . $events[$i][$j][7] . " - " .
+                                                                        $events[$i][$j][5] . " - " . $events[$i][$j][6]
+                                                                    ?>
+                                                                </span>
+                                                                <span>
+                                                                    <?php echo $events[$i][$j][8] . ": " . $events[$i][$j][9] ?>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            <?php } ?>
+                                        </div>
+                                    <?php }
                                 } ?>
                             </div>
-                        <?php } unset($value);  ?>
+                        <?php } unset($value);?>
                     </div>
                 </div>
             </div>
@@ -112,7 +175,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
                         </li>
-                    <?php } unset($value); ?>
+                    <?php } ?>
                 </ul>
             </nav>
         </div>
