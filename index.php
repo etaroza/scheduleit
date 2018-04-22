@@ -1,6 +1,8 @@
 <?php
     include_once "Scheduleit.php";
     include_once "config.php";
+
+    $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
 ?>
 
 <!doctype html>
@@ -34,7 +36,7 @@
                 <form action="" method="get">
                     <div class="form-group">
                         <input type="email" name="email" class="form-control" id="teacherEmail" aria-describedby="teacherEmail"
-                               placeholder="name@example.com" value="<?php echo isset($_GET['email']) ? $_GET['email'] : '' ?>" required>
+                               placeholder="name@example.com" value="<?php $data->formInputValueChecker($data->formInputValidation($_GET["email"])) ?>" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -46,7 +48,6 @@
         </div>
 
         <?php if (isset($_GET["email"])) {
-            $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
             $singleTeacherData = $data->getSingleTeacherData();
 
             $events = $data->prepareTeacherEventsData();

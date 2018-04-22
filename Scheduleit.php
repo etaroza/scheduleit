@@ -28,6 +28,23 @@ class Scheduleit
         $this->eventList = $this->eventList();
     }
 
+    function formInputValueChecker($input)
+    {
+        if (isset($input)) {
+            return $input;
+        } else {
+            return "";
+        }
+    }
+
+    function formInputValidation($email)
+    {
+        $email = trim($email);
+        $email = stripslashes($email);
+        $email = htmlspecialchars($email);
+        return $email;
+    }
+
     /**
      * For minimising eventList() calls
      */
@@ -264,8 +281,10 @@ class Scheduleit
         }
         unset($value);
 
-        //remove commas at the beginning and end of owner string
-        //(,1039,810,205,819,) to (1039,810,205,819)
+        /**
+         * remove commas at the beginning and end of owner string
+         * (,1039,810,205,819,) to (1039,810,205,819)
+         */
         foreach ($eventOwners as $key => $value){
             if ( ($value[0] == ",") && (substr($value, -1) == ",") ) {
                 $removeCommaAtStartAndEnd = substr($value, 1, -1);
@@ -293,7 +312,7 @@ class Scheduleit
 
     function getSingleTeacherData()
     {
-        $teacherTypedInEmail = $_GET["email"];
+        $teacherTypedInEmail = $this->formInputValidation($_GET["email"]);
 
         $resources = $this->resourceList["teachers"];
 
@@ -339,7 +358,7 @@ class Scheduleit
 
     function getResourceList()
     {
-        try{
+        try {
             $resourceListEndpoint = "resources?fields=id,name,email,owner&limit=$this->limit";
             $resourceListResponse = $this->apiCall($resourceListEndpoint);
 
