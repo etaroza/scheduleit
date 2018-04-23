@@ -241,12 +241,34 @@ class Scheduleit
         return $result;
     }
 
+    function generateDateRange()
+    {
+        $currentDate = new DateTime();
+        $startDate = new DateTime();
+        $endDate = new DateTime();
+
+        $yearFromTest = date("o", strtotime( $currentDate->format("Y-m-d") ));
+        $monthFromTest = date("m", strtotime( $currentDate->format("Y-m-d") ));
+        $dayFromTest = date("d", strtotime( $currentDate->format("Y-m-d") ));
+
+        $startDateMonth = (int) $monthFromTest - 2;
+        $endDateMonth = (int) $monthFromTest + 6;
+
+        $startDate = $startDate->setDate($yearFromTest, $startDateMonth, $dayFromTest)->format('Y-m-d');
+        $endDate = $endDate->setDate($yearFromTest, $endDateMonth, $dayFromTest)->format('Y-m-d');
+
+        $dateRange = "date_range_from=" . $startDate . "&date_range_to=" . $endDate;
+
+        return $dateRange;
+    }
+
     function eventList()
     {
         $teacherId = $this->getSingleTeacherData()["id"];
+        $dateRange = $this->generateDateRange();
 
         try{
-            $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&limit=$this->limit&sort=date_start";
+            $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&$dateRange&limit=$this->limit&sort=date_start";
             $eventDataResponse = $this->apiCall($eventDataEndpoint);
 
             $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];

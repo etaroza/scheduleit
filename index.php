@@ -48,15 +48,11 @@
         </div>
 
         <?php if (isset($_GET["email"])) {
+
             $singleTeacherData = $data->getSingleTeacherData();
 
             $events = $data->prepareTeacherEventsData();
-            $eventsMonth = $data->getDataFromEventList()["month"];
-            $eventsDates = $data->getDataFromEventList()["date"];
             $uniqueMonth = $data->getDataFromEventList()["uniqueMonth"];
-            $amountOfEvents = $data->getDataFromEventList()["amountOfEvents"];
-            $month = $data->getDataFromEventList()["month"];
-            $dateEnd = $data->getDataFromEventList()["dateEnd"];
             $currentDate = new DateTime();
 
             $reorganizedEventMonths = $data->reorganizeEventMonths($events);
@@ -129,7 +125,7 @@
                                                             </span>
                                                         </h2>
                                                     </div>
-                                                    <?php if ($currentDate > new DateTime($dateEnd[$i])) { ?>
+                                                    <?php if ($currentDate > new DateTime($events[$i][$j][0])) { ?>
                                                         <div class="col-7 col-sm-7 col-md-8 padding-right-0">
                                                             <div class="event-details text-muted">
                                                                 <span>
