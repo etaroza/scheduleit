@@ -109,34 +109,28 @@
                                         <div class="separator">
                                              <?php for ($j = 0; $j < count($events[$i]); $j++) { ?>
                                                 <div class="row">
-                                                    <div class="col-4 col-sm-3 event-date-and-time">
+                                                    <div class="col-3 col-sm-2 event-date">
                                                         <h2>
-                                                        <?php if (!($j > 0)) { ?>
-                                                            <span class="event-numerical-day-month">
-                                                                <span>
+                                                            <?php if (!($j > 0)) { ?>
+                                                                <span class="event-day">
+                                                                    <?php echo date("D", strtotime($events[$i][$j][0])) ?>
+                                                                </span>
+                                                                <span class="event-numerical-day-month">
                                                                     <?php echo date("d", strtotime($events[$i][$j][0]))
                                                                         . " " . date("M", strtotime($events[$i][$j][0])) ?>
                                                                 </span>
+                                                            <?php } ?>
+                                                        </h2>
+                                                    </div>
+                                                    <div class="col-2 col-sm-3 col-md-2 event-hours">
+                                                        <h2>
+                                                            <span>
+                                                                <?php echo $events[$i][$j][1] ?>
                                                             </span>
-                                                            <span class="event-day-hours">
-                                                                <span>
-                                                                    <?php echo date("l", strtotime($events[$i][$j][0])) ?>
-                                                                </span>
-                                                                <span>
-                                                                    <?php echo $events[$i][$j][1] ?>
-                                                                </span>
-                                                            </span>
-                                                        <?php } else { ?>
-                                                            <span class="event-day-hours">
-                                                                <span>
-                                                                    <?php echo $events[$i][$j][1] ?>
-                                                                </span>
-                                                            </span>
-                                                        <?php } ?>
                                                         </h2>
                                                     </div>
                                                     <?php if ($currentDate > new DateTime($dateEnd[$i])) { ?>
-                                                        <div class="col-8 col-sm-9">
+                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0">
                                                             <div class="event-details text-muted">
                                                                 <span>
                                                                     <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
@@ -150,7 +144,7 @@
                                                             </div>
                                                         </div>
                                                     <?php } else { ?>
-                                                        <div class="col-8 col-sm-9">
+                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0">
                                                             <div class="event-details">
                                                                 <span>
                                                                     <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .

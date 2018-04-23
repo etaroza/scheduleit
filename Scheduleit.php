@@ -140,10 +140,14 @@ class Scheduleit
 
                     if (count($zurichRoom) == 0) {
                         $groupedDates[$i][$j][] = "Winterthur";
-                        $groupedDates[$i][$j][] = $winterthurRoom[$key];
+
+                        !isset($winterthurRoom[$key]) || trim($winterthurRoom[$key])=== "" ?
+                            $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $winterthurRoom[$key];
                     } else {
                         $groupedDates[$i][$j][] = "Zurich";
-                        $groupedDates[$i][$j][] = $zurichRoom[$key];
+
+                        !isset($zurichRoom[$key]) || trim($zurichRoom[$key])=== "" ?
+                            $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $zurichRoom[$key];
                     };
 
                     $groupedDates[$i][$j][] = $customer[$key];

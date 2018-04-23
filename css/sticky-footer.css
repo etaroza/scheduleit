@@ -25,6 +25,33 @@ body {
     }
 }
 
+@media (max-width: 576px) and (orientation:landscape) {
+    .col-3 {
+        flex: 0 0 16% !important;
+        max-width: 16% !important;
+    }
+
+    .col-7 {
+        flex: 0 0 66.333333% !important;
+        max-width: 66.333333% !important;
+    }
+
+    .col-2 {
+        flex: 0 0 17.666667% !important;
+        max-width: 17.666667% !important;
+    }
+}
+
+.padding-right-0 {
+    padding-right: 0;
+}
+
+/*@media (min-width: 992px) and (orientation:portrait) {*/
+    /*.col-4 {*/
+    /*// redefined*/
+    /*}*/
+/*}*/
+
 .footer {
     position: fixed;
     bottom: 0;
@@ -59,18 +86,18 @@ body {
     padding: 2rem 1rem;
 }
 
-.event-date-and-time {
+.event-date, .event-hours {
     padding-left: 0;
     padding-right: 0;
     padding-top: .2rem;
 }
 
-.event-date-and-time h2 {
+.event-date h2, .event-hours h2 {
     font-weight: normal;
     font-size: 1rem;
 }
 
-.event-date-and-time h2 span, .event-details span {
+.event-date h2 span, .event-details span, .event-hours h2 span {
     display: block;
 }
 
