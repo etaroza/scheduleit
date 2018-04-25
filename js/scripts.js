@@ -44,8 +44,6 @@ jQuery(document).ready(function () {
 
                 city.each(function(indexCity, valueCity) {
 
-                    console.log(valueCity);
-
                     if (jQuery(valueCity).hasClass("display-none")) {
                         counter++;
                     }
@@ -86,9 +84,9 @@ jQuery(document).ready(function () {
             });
 
             if (counter === separatorCount) {
-                jQuery("#events div h4").addClass("display-none");
+                jQuery(valueMonth).addClass("display-none");
             } else {
-                jQuery("#events div h4").removeClass("display-none");
+                jQuery(valueMonth).removeClass("display-none");
             }
         });
     }
