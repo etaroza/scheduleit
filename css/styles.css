@@ -46,12 +46,6 @@ body {
     padding-right: 0;
 }
 
-/*@media (min-width: 992px) and (orientation:portrait) {*/
-    /*.col-4 {*/
-    /*// redefined*/
-    /*}*/
-/*}*/
-
 .footer {
     position: fixed;
     bottom: 0;
@@ -125,4 +119,18 @@ body {
 .separator .row div:nth-child(2) {
     padding-left: 0;
     padding-right: 0;
+}
+
+.display-none {
+    display: none;
+}
+
+#filter-city {
+    background-color: #e9ecef;
+    padding: .5em;
+    margin-bottom: 1em;
+}
+
+.jumbotron {
+    margin-bottom: 1em;
 }

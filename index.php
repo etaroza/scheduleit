@@ -1,8 +1,9 @@
 <?php
-    include_once "Scheduleit.php";
     include_once "config.php";
+    include_once "Helpers.php";
+    include_once "Scheduleit.php";
 
-    $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
+    $helpers = new Helpers();
 ?>
 
 <!doctype html>
@@ -10,7 +11,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
+    <meta name="description" content="event schedule">
     <meta name="author" content="">
 
     <title>Schedule</title>
@@ -18,8 +19,8 @@
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <!-- Custom styles for this template -->
-    <link href="css/sticky-footer.css" rel="stylesheet">
+    <!-- Custom styles -->
+    <link href="css/styles.css" rel="stylesheet">
   </head>
   <body class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="220">
     <!-- Begin page content -->
@@ -36,7 +37,7 @@
                 <form action="" method="get">
                     <div class="form-group">
                         <input type="email" name="email" class="form-control" id="teacherEmail" aria-describedby="teacherEmail"
-                               placeholder="name@example.com" value="<?php echo $data->formInputValueChecker($data->formInputValidation($_GET["email"])) ?>" required>
+                               placeholder="name@example.com" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
@@ -44,20 +45,21 @@
                 <br><br>
                 <?php } ?>
             </div>
-
         </div>
 
         <?php if (isset($_GET["email"])) {
 
+            $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
+
             $singleTeacherData = $data->getSingleTeacherData();
 
-            $events = $data->prepareTeacherEventsData();
             $uniqueMonth = $data->getDataFromEventList()["uniqueMonth"];
+            $events = $data->prepareTeacherEventsData();
             $currentDate = new DateTime();
 
             $reorganizedEventMonths = $data->reorganizeEventMonths($events);
 
-        if ($data->getResourceList() === "429") { ?>
+            if ($data->getResourceList() === "429") { ?>
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
@@ -82,6 +84,22 @@
                     </div>
                 </div>
             <?php } else { ?>
+
+            <div class="row row-no-gutters" id="filter-city">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="all-radio-btn" value="all" checked>
+                    <label class="form-check-label" for="all-radio-btn">All</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="zurich-radio-btn" value="zurich">
+                    <label class="form-check-label" for="zurich-radio-btn">Zurich</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="winterthur-radio-btn" value="winterthur">
+                    <label class="form-check-label" for="winterthur-radio-btn">Winterthur</label>
+                </div>
+            </div>
+
             <div class="row row-no-gutters">
                 <div class="col-12">
                     <div id="events">
@@ -104,7 +122,7 @@
                                     if ($reorganizedEventMonths[$i] == $value) { ?>
                                         <div class="separator">
                                              <?php for ($j = 0; $j < count($events[$i]); $j++) { ?>
-                                                <div class="row">
+                                                <div class="row <?php echo $events[$i][$j][7] ?>">
                                                     <div class="col-3 col-sm-2 event-date">
                                                         <h2>
                                                             <?php if (!($j > 0)) { ?>
@@ -186,5 +204,6 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
   </body>
 </html>
