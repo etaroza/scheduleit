@@ -192,6 +192,10 @@ header {
     height: 1.6em;
 }
 
+.dropdown-item:active {
+    background-color: #a0913d;
+}
+
 .navbar-bg {
     background-color: #fff!important;
 }
