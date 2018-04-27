@@ -11,6 +11,15 @@ body {
         padding-right: 0;
         padding-left: 0;
     }
+
+    #navbar-months {
+        padding-right: 0.938em;
+        padding-left: 0.938em;
+    }
+
+    .nav-link {
+        padding: .3em .2rem;
+    }
 }
 
 @media only screen and (min-width: 576px) {
@@ -22,6 +31,12 @@ body {
     .row-no-gutters > [class*="col-"] {
         padding-right: 0;
         padding-left: 0;
+    }
+}
+
+@media only screen and (min-width: 1024px) {
+    .nav-item {
+        margin-right: 0.938em;
     }
 }
 
@@ -46,11 +61,38 @@ body {
     padding-right: 0;
 }
 
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
+footer {
+    background-color: #2d3237 !important;
+}
+
+.nav-link {
+    width: fit-content;
+    margin: auto;
+}
+
+.nav-item {
+    padding: 0;
+}
+.nav-pills {
+    width: inherit;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #fff;
+    background-color: #a0913d;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #fff;
+    color: #a0913d;
+}
+
+.nav-link {
+    color: #b4b7ba;
+}
+
+.nav-link:hover {
+    color: #fff;
 }
 
 .separator {
@@ -61,11 +103,6 @@ body {
 
 .scroll-spy {
     position: relative;
-}
-
-#navbar-months {
-    background-color: #e9ecef !important;
-    height: 60px;
 }
 
 #events {
@@ -89,6 +126,7 @@ body {
 .event-date h2, .event-hours h2 {
     font-weight: normal;
     font-size: 1rem;
+    padding-top: .2rem;
 }
 
 .event-date h2 span, .event-details span, .event-hours h2 span {
@@ -133,4 +171,58 @@ body {
 
 .jumbotron {
     margin-bottom: 1em;
+}
+
+.text-muted {
+    color: #a9a9a9 !important;
+}
+
+
+/* HEADER */
+header {
+    margin-bottom: 5em;
+}
+.navbar {
+    -webkit-box-shadow: 0 1px 2px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 0 1px 2px -1px rgba(0,0,0,0.32);
+    box-shadow: 0 1px 2px -1px rgba(0,0,0,0.32);
+}
+
+.navbar-brand img {
+    height: 1.6em;
+}
+
+.navbar-bg {
+    background-color: #fff!important;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #a0913d;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(160,145,61,.25);
+}
+
+.btn-outline {
+    color: #a0913d;
+    background-color: transparent;
+    background-image: none;
+    border-color: #a0913d;
+}
+
+.btn-outline:hover {
+    color: #fff;
+    background-color: #647382;
+    border-color: #647382;
+}
+
+.btn-outline:focus {
+    box-shadow: 0 0 0 0.2rem rgba(160,145,61,.5);
+}
+
+.btn-outline-success:not(:disabled):not(.disabled):active {
+    color: #fff;
+    background-color: #647382;
+    border-color: #647382;
 }

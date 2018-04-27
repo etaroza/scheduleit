@@ -4,6 +4,23 @@
     include_once "Scheduleit.php";
 
     $helpers = new Helpers();
+
+    if (isset($_GET["email"])) {
+        $currentDate = new DateTime();
+        $firstActiveEvent = true;
+
+        $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
+
+        $singleTeacherData = $data->getSingleTeacherData();
+
+        $uniqueMonth = $data->getDataFromEventList()["uniqueMonth"];
+
+        $events = $data->prepareTeacherEventsData();
+
+        $dateAndLastHour = $helpers->eventEndingDateAndLastHour($events);
+
+        $reorganizedEventMonths = $data->reorganizeEventMonths($events);
+    }
 ?>
 
 <!doctype html>
@@ -11,10 +28,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="event schedule">
+    <meta name="description" content="schedule for teachers">
     <meta name="author" content="">
 
-    <title>Schedule</title>
+    <title>Teacher schedule</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
@@ -23,41 +40,50 @@
     <link href="css/styles.css" rel="stylesheet">
   </head>
   <body class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="220">
+
+    <header>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light navbar-bg">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="img/logo.png" alt="vox-sprachschule logo">
+                </a>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-dropdown-form" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbar-dropdown-form">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown">
+                            <?php if (isset($_GET["email"]) && $data->getResourceList() != "429") { ?>
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    City filter
+                                </a>
+                            <?php }?>
+
+                            <div class="dropdown-menu" aria-labelledby="citiesDropdown">
+                                <a id="cities-dropdown-all" class="dropdown-item" href="#filter=all">All</a>
+                                <a id="cities-dropdown-zurich" class="dropdown-item" href="#filter=zurich">Zurich</a>
+                                <a id="cities-dropdown-winterthur" class="dropdown-item" href="#filter=winterthur">Winterthur</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <form action="#first-active-event" method="get" class="form-inline my-2 my-lg-0">
+                        <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
+                               aria-describedby="teacherEmail" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
+                        <button class="btn btn-outline my-2 my-sm-0" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
     <!-- Begin page content -->
     <main role="main" class="container">
-        <?php if (!isset($_GET["email"])) { ?>
-            <div class="row jumbotron border-radius-0 row-no-gutters">
-                <div class="mx-auto col-12 col-sm-10 col-lg-7">
-                    <h1 class="display-4">Type in teachers email</h1>
-                    <hr class="my-4">
-        <?php } else { ?>
-            <div class="row jumbotron border-radius-0 row-no-gutters">
-                <div class="mx-auto col-12 col-sm-10 col-lg-7">
-        <?php } ?>
-                <form action="" method="get">
-                    <div class="form-group">
-                        <input type="email" name="email" class="form-control" id="teacherEmail" aria-describedby="teacherEmail"
-                               placeholder="name@example.com" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-                <?php if (!isset($_GET["email"])) { ?>
-                <br><br>
-                <?php } ?>
-            </div>
-        </div>
 
         <?php if (isset($_GET["email"])) {
-
-            $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
-
-            $singleTeacherData = $data->getSingleTeacherData();
-
-            $uniqueMonth = $data->getDataFromEventList()["uniqueMonth"];
-            $events = $data->prepareTeacherEventsData();
-            $currentDate = new DateTime();
-
-            $reorganizedEventMonths = $data->reorganizeEventMonths($events);
 
             if ($data->getResourceList() === "429") { ?>
                 <div class="row">
@@ -84,21 +110,6 @@
                     </div>
                 </div>
             <?php } else { ?>
-
-            <div class="row row-no-gutters" id="filter-city">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="all-radio-btn" value="all" checked>
-                    <label class="form-check-label" for="all-radio-btn">All</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="zurich-radio-btn" value="zurich">
-                    <label class="form-check-label" for="zurich-radio-btn">Zurich</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="winterthur-radio-btn" value="winterthur">
-                    <label class="form-check-label" for="winterthur-radio-btn">Winterthur</label>
-                </div>
-            </div>
 
             <div class="row row-no-gutters">
                 <div class="col-12">
@@ -143,8 +154,8 @@
                                                             </span>
                                                         </h2>
                                                     </div>
-                                                    <?php if ($currentDate > new DateTime($events[$i][$j][0])) { ?>
-                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0">
+                                                    <?php if ($currentDate > new DateTime($dateAndLastHour[$i][$j][0])) { ?>
+                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0 event-message">
                                                             <div class="event-details text-muted">
                                                                 <span>
                                                                     <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
@@ -158,8 +169,13 @@
                                                             </div>
                                                         </div>
                                                     <?php } else { ?>
-                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0">
-                                                            <div class="event-details">
+                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0 event-message">
+                                                            <?php if ($firstActiveEvent === true) {
+                                                                $firstActiveEvent = false; ?>
+                                                                <div id="first-active-event" class="event-details">
+                                                            <?php } else { ?>
+                                                                <div class="event-details">
+                                                            <?php } ?>
                                                                 <span>
                                                                     <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
                                                                         $events[$i][$j][4] . " | " . $events[$i][$j][7] . " - " .
@@ -184,17 +200,19 @@
             </div>
     </main>
 
-    <footer class="footer">
-        <div class="container padding-left-right-0">
-            <nav id="navbar-months" class="navbar navbar-light bg-light">
-                <ul class="nav nav-pills">
-                    <?php foreach ($uniqueMonth as $value) { ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
-                        </li>
-                    <?php } ?>
-                </ul>
-            </nav>
+    <footer class="fixed-bottom">
+        <div class="container">
+            <div class="row">
+                <nav id="navbar-months" class="col-12 navbar navbar-light">
+                    <ul class="nav nav-pills">
+                        <?php foreach ($uniqueMonth as $value) { ?>
+                            <li class="col-3 col-md-2 col-lg-1 nav-item">
+                                <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </footer>
 

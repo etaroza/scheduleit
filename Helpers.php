@@ -62,4 +62,21 @@ class Helpers
 
         return $result;
     }
+
+    /**
+     * create a string (date + hour) for checking if event has passed
+     */
+    function eventEndingDateAndLastHour($events)
+    {
+        $dateAndLastHour = array();
+
+        for ($i = 0; $i < count($events); $i++) {
+            for ($j = 0; $j < count($events[$i]); $j++) {
+                $endingHour = substr($events[$i][$j][1], strpos($events[$i][$j][1], "- ") + 1);
+                $dateAndLastHour[$i][$j][] = $events[$i][$j][0] . " " . $endingHour;
+            }
+        }
+
+        return $dateAndLastHour;
+    }
 }

@@ -101,9 +101,7 @@ class Scheduleit extends Helpers
 
         $groupedDates = array();
 
-        /**
-         * keys for multidimensional array
-         */
+
         $i = 0;
         $j = 0;
 
@@ -148,7 +146,7 @@ class Scheduleit extends Helpers
     }
 
     /**
-     * Shortens name from Name Surename to Name S.
+     * Shorten name from Name Surename to Name S.
      */
     function shortenNames($customerTemp)
     {
