@@ -1,21 +1,41 @@
 jQuery(document).ready(function () {
 
+    // initiate jquery select2 plugin
+    jQuery('#city-select').select2({
+        minimumResultsForSearch: Infinity,
+        placeholder: "Select a city",
+        theme: "bootstrap"
+    });
+    
+    // for caching purposes, better performance
+    var $root = jQuery("html, body");
+
+    jQuery("#jump-to-today").click(function () {
+        $root.animate({
+            scrollTop: jQuery( jQuery.attr(this, 'href') ).offset().top - 65
+        }, 800, "swing");
+
+        return false;
+    });
+
+    jQuery(".nav-link").click(function () {
+        $root.animate({
+            scrollTop: jQuery(jQuery.attr(this, 'href')).offset().top - 65
+        }, 800, "swing");
+
+        return false;
+    });
+
     muteDateHoursText();
 
-    function getFilteredCity()
-    {
-        var filterId = window.location.hash;
-        return filterId.split('=')[1];
-    }
-
-    jQuery(window).on('hashchange', function(e) {
-        if (getFilteredCity() === "all") {
+    jQuery("#city-select").change(function() {
+        if (jQuery("select[name=city-selector]").val() === "all") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").removeClass("display-none");
-        } else if (getFilteredCity() === "zurich") {
+        } else if (jQuery("select[name=city-selector]").val() === "zurich") {
             jQuery(".Zurich").removeClass("display-none");
             jQuery(".Winterthur").addClass("display-none");
-        } else if (getFilteredCity() === "winterthur") {
+        } else if (jQuery("select[name=city-selector]").val() === "winterthur") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").addClass("display-none");
         }

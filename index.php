@@ -13,7 +13,7 @@
 
         $singleTeacherData = $data->getSingleTeacherData();
 
-        $uniqueMonth = $data->getDataFromEventList()["uniqueMonth"];
+        $uniqueMonth = $data->eventList()["uniqueMonth"];
 
         $events = $data->prepareTeacherEventsData();
 
@@ -34,17 +34,19 @@
     <title>Teacher schedule</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" rel="stylesheet" />
     <!-- Custom styles -->
-    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
   </head>
   <body class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="220">
 
     <header>
         <nav class="navbar fixed-top navbar-expand-lg navbar-light navbar-bg">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="/">
                     <img src="img/logo.png" alt="vox-sprachschule logo">
                 </a>
 
@@ -53,28 +55,25 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbar-dropdown-form">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item dropdown">
-                            <?php if (isset($_GET["email"]) && $data->getResourceList() != "429") { ?>
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                   role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    City filter
-                                </a>
-                            <?php }?>
-
-                            <div class="dropdown-menu" aria-labelledby="citiesDropdown">
-                                <a id="cities-dropdown-all" class="dropdown-item" href="#filter=all">All</a>
-                                <a id="cities-dropdown-zurich" class="dropdown-item" href="#filter=zurich">Zurich</a>
-                                <a id="cities-dropdown-winterthur" class="dropdown-item" href="#filter=winterthur">Winterthur</a>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <form action="#first-active-event" method="get" class="form-inline my-2 my-lg-0">
+                    <form action="" method="get" class="form-inline mr-auto mr-3 my-3 my-lg-0" id="emailForm">
                         <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
                                aria-describedby="teacherEmail" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
-                        <button class="btn btn-outline my-2 my-sm-0" type="submit">Submit</button>
+                        <button class="btn btn-outline mt-3 my-sm-0" type="submit">Submit</button>
                     </form>
+
+                    <?php if (isset($_GET["email"])) { ?>
+                        <div class="navbar-nav mr-3">
+                            <label for="city-select"></label>
+                            <select class="city-select my-1 mr-sm-2" name="city-selector" id="city-select">
+                                <option></option>
+                                <option value="all">All</option>
+                                <option value="zurich">Zurich</option>
+                                <option value="winterthur">Winterthur</option>
+                            </select>
+                        </div>
+
+                        <a href="#first-active-event" id="jump-to-today">Jump to Today</a>
+                    <?php } ?>
                 </div>
             </div>
         </nav>
@@ -93,7 +92,7 @@
                         </div>
                     </div>
                 </div>
-            <?php } elseif ($singleTeacherData == null) { ?>
+            <?php } elseif ($singleTeacherData === null) { ?>
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
@@ -101,7 +100,7 @@
                         </div>
                     </div>
                 </div>
-            <?php } elseif (count($events) == 0) { ?>
+            <?php } elseif (count($events) === 0) { ?>
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noEvents" class="alert alert-warning" role="alert">
@@ -219,9 +218,23 @@
     <?php }
     } ?>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
     <script src="js/scripts.js"></script>
+
+    <!--Scroll to earliest active event after submit-->
+    <?php if (isset($_GET["email"])) { ?>
+        <script>
+            jQuery(document).ready(function() {
+                setTimeout(function () {
+                    jQuery("html, body").animate({
+                        scrollTop: jQuery("#first-active-event").offset().top - 65
+                    }, 800, "swing");
+                }, 400);
+            });
+        </script>
+    <?php } ?>
   </body>
 </html>

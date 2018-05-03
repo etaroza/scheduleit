@@ -16,8 +16,9 @@ class Scheduleit extends Helpers
     private $userId;
     private $username;
     private $password;
-    private $resourceList = array();
-    private $eventList = array();
+
+    protected $resourceList = array();
+    protected $eventList = array();
 
     public function __construct($userId, $username, $password)
     {
@@ -26,20 +27,6 @@ class Scheduleit extends Helpers
         $this->password = $password;
         $this->resourceList = $this->getResourceList();
         $this->eventList = $this->eventList();
-    }
-
-    /**
-     * For minimising eventList() calls
-     */
-    function getDataFromEventList()
-    {
-        $data = array();
-
-        foreach ($this->eventList as $key => $value) {
-            $data[$key] = $value;
-        }
-
-        return $data;
     }
 
     function prepareTeacherEventsData()
@@ -54,7 +41,7 @@ class Scheduleit extends Helpers
 
         $explodeOwnerIds = [];
 
-        foreach ($this->getDataFromEventList()["owners"] as $key => $value) {
+        foreach ($this->eventList["owners"] as $key => $value) {
             array_push($explodeOwnerIds, explode(',', $value));
         }
         unset($value);
@@ -77,7 +64,7 @@ class Scheduleit extends Helpers
         $winterthurRoom = $this->implode($winterthurRoomTemp);
         $customer = $this->implode($customerTemp);
 
-        $groupMessagesByDate = $this->groupMessagesByDate($this->getDataFromEventList()["date"], $language, $course,
+        $groupMessagesByDate = $this->groupMessagesByDate($this->eventList["date"], $language, $course,
             $intensity, $mode, $zurichRoom, $winterthurRoom, $customer);
 
         return $groupMessagesByDate;
@@ -112,12 +99,12 @@ class Scheduleit extends Helpers
                 if($uniqueDate == $date) {
 
                     $groupedDates[$i][$j][] = $date;
-                    $groupedDates[$i][$j][] = $this->getDataFromEventList()["startEndTime"][$key];
+                    $groupedDates[$i][$j][] = $this->eventList["startEndTime"][$key];
                     $groupedDates[$i][$j][] = $language[$key];
                     $groupedDates[$i][$j][] = $course[$key];
                     $groupedDates[$i][$j][] = $intensity[$key];
                     $groupedDates[$i][$j][] = $mode[$key];
-                    $groupedDates[$i][$j][] = $this->getDataFromEventList()["title"][$key];
+                    $groupedDates[$i][$j][] = $this->eventList["title"][$key];
 
                     if (count($zurichRoom) == 0) {
                         $groupedDates[$i][$j][] = "Winterthur";
@@ -145,45 +132,6 @@ class Scheduleit extends Helpers
         return $groupedDates;
     }
 
-    /**
-     * Shorten name from Name Surename to Name S.
-     */
-    function shortenNames($customerTemp)
-    {
-        $temp = array();
-        $customersWithShortSurnames = array();
-
-        foreach ($customerTemp as $key => $value) {
-
-            foreach ($value as $innerKey => $nameString) {
-
-                $wordByWord = explode(" ", $nameString);
-                $tempStr = "";
-
-                foreach ($wordByWord as $name) {
-
-                    if( ($name != reset($wordByWord)) &&
-                        ctype_upper(mb_substr($name, 0, 1, 'utf-8')) ) {
-                        $tempStr .= mb_substr($name, 0, 1, 'utf-8') . ". ";
-                    } else {
-                        $tempStr .= $name . " ";
-                    }
-
-                }
-
-                $removedSpaceAtEnd = rtrim($tempStr);
-                array_push($temp, $removedSpaceAtEnd);
-
-            }
-
-            $customersWithShortSurnames[$key] = array_replace($value, $temp);
-            $temp = array();
-
-        }
-
-        return $customersWithShortSurnames;
-    }
-
     function generateDateRange()
     {
         $currentDate = new DateTime();
@@ -207,76 +155,83 @@ class Scheduleit extends Helpers
 
     function eventList()
     {
-        $teacherId = $this->getSingleTeacherData()["id"];
-        $dateRange = $this->generateDateRange();
+        if (isset($this->eventList) && count($this->eventList) > 0) {
 
-        try{
-            $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&$dateRange&limit=$this->limit&sort=date_start";
-            $eventDataResponse = $this->apiCall($eventDataEndpoint);
+            return $this->eventList;
 
-            $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];
-        } catch (Exception $e) {
-            echo "Error while performing API call: " . $e;
-            die;
-        }
+        } else {
 
-        $eventId = [];
-        $eventTitle = [];
-        $eventStartEndTime = [];
-        $eventDates = [];
-        $eventDateEnd = [];
-        $eventMonths = [];
-        $eventOwners = [];
+            $teacherId = $this->getSingleTeacherData()["id"];
+            $dateRange = $this->generateDateRange();
 
-        foreach ($eventData as $value) {
-            array_push($eventId, $value["id"]);
-            array_push($eventTitle, $value["title"]);
+            try {
+                $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&$dateRange&limit=$this->limit&sort=date_start";
+                $eventDataResponse = $this->apiCall($eventDataEndpoint);
 
-            $startTime = new DateTime($value["date_start"]);
-            $endTime = new DateTime($value["date_end"]);
-            $startEndTime = $startTime->format("H:i") . " - " .
-                $endTime->format("H:i");
-            array_push($eventStartEndTime, $startEndTime);
-
-            $date = $startTime->format("o-m-d");
-            array_push($eventDates, $date);
-
-            $month = $startTime->format("F");
-            array_push($eventMonths, $month);
-
-            array_push($eventDateEnd, $value["date_end"]);
-
-            array_push($eventOwners, $value["owner"]);
-        }
-        unset($value);
-
-        /**
-         * remove commas at the beginning and end of owner string
-         * (,1039,810,205,819,) to (1039,810,205,819)
-         */
-        foreach ($eventOwners as $key => $value){
-            if ( ($value[0] == ",") && (substr($value, -1) == ",") ) {
-                $removeCommaAtStartAndEnd = substr($value, 1, -1);
-                $eventOwners[$key] = $removeCommaAtStartAndEnd;
+                $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];
+            } catch (Exception $e) {
+                echo "Error while performing API call: " . $e;
+                die;
             }
+
+            $eventId = [];
+            $eventTitle = [];
+            $eventStartEndTime = [];
+            $eventDates = [];
+            $eventDateEnd = [];
+            $eventMonths = [];
+            $eventOwners = [];
+
+            foreach ($eventData as $value) {
+                array_push($eventId, $value["id"]);
+                array_push($eventTitle, $value["title"]);
+
+                $startTime = new DateTime($value["date_start"]);
+                $endTime = new DateTime($value["date_end"]);
+                $startEndTime = $startTime->format("H:i") . " - " .
+                    $endTime->format("H:i");
+                array_push($eventStartEndTime, $startEndTime);
+
+                $date = $startTime->format("o-m-d");
+                array_push($eventDates, $date);
+
+                $month = $startTime->format("F");
+                array_push($eventMonths, $month);
+
+                array_push($eventDateEnd, $value["date_end"]);
+
+                array_push($eventOwners, $value["owner"]);
+            }
+            unset($value);
+
+            /**
+             * remove commas at the beginning and end of owner string
+             * (,1039,810,205,819,) to (1039,810,205,819)
+             */
+            foreach ($eventOwners as $key => $value) {
+                if (($value[0] == ",") && (substr($value, -1) == ",")) {
+                    $removeCommaAtStartAndEnd = substr($value, 1, -1);
+                    $eventOwners[$key] = $removeCommaAtStartAndEnd;
+                }
+            }
+            unset($value);
+
+            $uniqueMonths = array_unique($eventMonths, SORT_REGULAR);
+
+            $eventDetails = array(
+                "amountOfEvents" => count($eventData),
+                "id" => $eventId,
+                "title" => $eventTitle,
+                "dateEnd" => $eventDateEnd,
+                "startEndTime" => $eventStartEndTime,
+                "date" => $eventDates,
+                "month" => $eventMonths,
+                "uniqueMonth" => $uniqueMonths,
+                "owners" => $eventOwners
+            );
+
+            return $eventDetails;
         }
-        unset($value);
-
-        $uniqueMonths = array_unique($eventMonths, SORT_REGULAR);
-
-        $eventDetails = array(
-            "amountOfEvents" => count($eventData),
-            "id" => $eventId,
-            "title" => $eventTitle,
-            "dateEnd" => $eventDateEnd,
-            "startEndTime" => $eventStartEndTime,
-            "date" => $eventDates,
-            "month" => $eventMonths,
-            "uniqueMonth" => $uniqueMonths,
-            "owners" => $eventOwners
-        );
-
-        return $eventDetails;
     }
 
     function getSingleTeacherData()
@@ -327,56 +282,63 @@ class Scheduleit extends Helpers
 
     function getResourceList()
     {
-        try {
-            $resourceListEndpoint = "resources?fields=id,name,email,owner&limit=$this->limit";
-            $resourceListResponse = $this->apiCall($resourceListEndpoint);
+        if (isset($this->resourceList) && count($this->resourceList) > 0) {
 
-            /**
-             * if too many requests, return status code
-             */
-            if ($resourceListResponse["status_code"] === "429") {
-                return $resourceListResponse["status_code"];
+            return $this->resourceList;
+
+        } else {
+
+            try {
+                $resourceListEndpoint = "resources?fields=id,name,email,owner&limit=$this->limit";
+                $resourceListResponse = $this->apiCall($resourceListEndpoint);
+
+                /**
+                 * if too many requests, return status code
+                 */
+                if ($resourceListResponse["status_code"] === "429") {
+                    return $resourceListResponse["status_code"];
+                }
+
+                $resourceListData = $resourceListResponse["_embedded"]["resources"]["_embedded"]["data"];
+            } catch (Exception $e) {
+                echo "Error while performing API call: " . $e;
+                die;
             }
 
-            $resourceListData = $resourceListResponse["_embedded"]["resources"]["_embedded"]["data"];
-        } catch (Exception $e) {
-            echo "Error while performing API call: " . $e;
-            die;
+            $teachers = [];
+            $languages = [];
+            $courses = [];
+            $intensities = [];
+            $modes = [];
+            $customers = [];
+            $zurichRooms = [];
+            $winterthurRooms = [];
+
+            foreach ($resourceListData as $value) {
+                $teachers = $this->populateResourceArrays($value["owner"], $this->teacherGroupId, $teachers, $value);
+                $languages = $this->populateResourceArrays($value["owner"], $this->languageGroupId, $languages, $value);
+                $courses = $this->populateResourceArrays($value["owner"], $this->courseGroupId, $courses, $value);
+                $intensities = $this->populateResourceArrays($value["owner"], $this->intensityGroupId, $intensities, $value);
+                $modes = $this->populateResourceArrays($value["owner"], $this->modeGroupId, $modes, $value);
+                $customers = $this->populateResourceArrays($value["owner"], $this->customerGroupId, $customers, $value);
+                $zurichRooms = $this->populateResourceArrays($value["owner"], $this->zurichRoomGroupId, $zurichRooms, $value);
+                $winterthurRooms = $this->populateResourceArrays($value["owner"], $this->winterthurRoomGroupId, $winterthurRooms, $value);
+            }
+            unset($value);
+
+            $resourceData = array(
+                "teachers" => $teachers,
+                "languages" => $languages,
+                "courses" => $courses,
+                "intensities" => $intensities,
+                "modes" => $modes,
+                "customers" => $customers,
+                "zurichRooms" => $zurichRooms,
+                "winterthurRooms" => $winterthurRooms
+            );
+
+            return $resourceData;
         }
-
-        $teachers = [];
-        $languages = [];
-        $courses = [];
-        $intensities = [];
-        $modes = [];
-        $customers = [];
-        $zurichRooms = [];
-        $winterthurRooms = [];
-
-        foreach ($resourceListData as $value) {
-            $teachers = $this->populateResourceArrays($value["owner"], $this->teacherGroupId, $teachers, $value);
-            $languages = $this->populateResourceArrays($value["owner"], $this->languageGroupId, $languages, $value);
-            $courses = $this->populateResourceArrays($value["owner"], $this->courseGroupId, $courses, $value);
-            $intensities = $this->populateResourceArrays($value["owner"], $this->intensityGroupId, $intensities, $value);
-            $modes = $this->populateResourceArrays($value["owner"], $this->modeGroupId, $modes, $value);
-            $customers = $this->populateResourceArrays($value["owner"], $this->customerGroupId, $customers, $value);
-            $zurichRooms = $this->populateResourceArrays($value["owner"], $this->zurichRoomGroupId, $zurichRooms, $value);
-            $winterthurRooms = $this->populateResourceArrays($value["owner"], $this->winterthurRoomGroupId, $winterthurRooms, $value);
-        }
-        unset($value);
-
-        $resourceData = array(
-            "teachers" => $teachers,
-            "languages" => $languages,
-            "courses" => $courses,
-            "intensities" => $intensities,
-            "modes" => $modes,
-            "customers" => $customers,
-            "zurichRooms" => $zurichRooms,
-            "winterthurRooms" => $winterthurRooms
-        );
-
-        return $resourceData;
     }
 
     private function apiCall($endpoint)

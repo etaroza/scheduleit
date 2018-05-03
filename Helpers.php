@@ -64,7 +64,7 @@ class Helpers
     }
 
     /**
-     * create a string (date + hour) for checking if event has passed
+     * Create a string (date + hour) for checking if event has passed
      */
     function eventEndingDateAndLastHour($events)
     {
@@ -78,5 +78,44 @@ class Helpers
         }
 
         return $dateAndLastHour;
+    }
+
+    /**
+     * Shorten name from Name Surename to Name S.
+     */
+    function shortenNames($customerTemp)
+    {
+        $temp = array();
+        $customersWithShortSurnames = array();
+
+        foreach ($customerTemp as $key => $value) {
+
+            foreach ($value as $innerKey => $nameString) {
+
+                $wordByWord = explode(" ", $nameString);
+                $tempStr = "";
+
+                foreach ($wordByWord as $name) {
+
+                    if( ($name != reset($wordByWord)) &&
+                        ctype_upper(mb_substr($name, 0, 1, 'utf-8')) ) {
+                        $tempStr .= mb_substr($name, 0, 1, 'utf-8') . ". ";
+                    } else {
+                        $tempStr .= $name . " ";
+                    }
+
+                }
+
+                $removedSpaceAtEnd = rtrim($tempStr);
+                array_push($temp, $removedSpaceAtEnd);
+
+            }
+
+            $customersWithShortSurnames[$key] = array_replace($value, $temp);
+            $temp = array();
+
+        }
+
+        return $customersWithShortSurnames;
     }
 }
