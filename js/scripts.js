@@ -6,25 +6,6 @@ jQuery(document).ready(function () {
         placeholder: "Select a city",
         theme: "bootstrap"
     });
-    
-    // for caching purposes, better performance
-    var $root = jQuery("html, body");
-
-    jQuery("#jump-to-today").click(function () {
-        $root.animate({
-            scrollTop: jQuery( jQuery.attr(this, 'href') ).offset().top - 65
-        }, 800, "swing");
-
-        return false;
-    });
-
-    jQuery(".nav-link").click(function () {
-        $root.animate({
-            scrollTop: jQuery(jQuery.attr(this, 'href')).offset().top - 65
-        }, 800, "swing");
-
-        return false;
-    });
 
     muteDateHoursText();
 
@@ -32,20 +13,48 @@ jQuery(document).ready(function () {
         if (jQuery("select[name=city-selector]").val() === "all") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").removeClass("display-none");
+
+            scrollToEarliestEvent();
         } else if (jQuery("select[name=city-selector]").val() === "zurich") {
             jQuery(".Zurich").removeClass("display-none");
             jQuery(".Winterthur").addClass("display-none");
+
+            scrollToEarliestEvent();
         } else if (jQuery("select[name=city-selector]").val() === "winterthur") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").addClass("display-none");
+
+            scrollToEarliestEvent();
         }
 
         showHideSeparator();
         showHideH4WithMonth();
     });
 
-    function showHideSeparator()
-    {
+    // for caching purposes, better performance
+    var $root = jQuery("html, body");
+
+    jQuery("#jump-to-today").click(function () {
+        scrollToEarliestEvent();
+
+        return false;
+    });
+
+    jQuery(".nav-link").click(function () {
+        scrollToEarliestEvent();
+
+        return false;
+    });
+
+    function scrollToEarliestEvent() {
+        setTimeout(function () {
+            $root.animate({
+                scrollTop: jQuery("#first-active-event").offset().top - 65
+            }, 800, "swing");
+        }, 400);
+    }
+
+    function showHideSeparator() {
         var events = jQuery("#events");
 
         /**
@@ -89,8 +98,7 @@ jQuery(document).ready(function () {
         });
     }
 
-    function showHideH4WithMonth()
-    {
+    function showHideH4WithMonth() {
         var events = jQuery("#events");
 
         /**
