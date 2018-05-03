@@ -63,7 +63,7 @@
 
                     <?php if (isset($_GET["email"])) { ?>
                         <div class="navbar-nav mr-3">
-                            <label for="city-select"></label>
+                            <label for="city-select">Filter by school: </label>
                             <select class="city-select my-1 mr-sm-2" name="city-selector" id="city-select">
                                 <option></option>
                                 <option value="all">All</option>
@@ -71,8 +71,6 @@
                                 <option value="winterthur">Winterthur</option>
                             </select>
                         </div>
-
-                        <a href="#first-active-event" id="jump-to-today">Jump to Today</a>
                     <?php } ?>
                 </div>
             </div>
@@ -204,8 +202,13 @@
             <div class="row">
                 <nav id="navbar-months" class="col-12 navbar navbar-light">
                     <ul class="nav nav-pills">
+                        <?php if (isset($_GET["email"])) { ?>
+                            <li class="col-3 col-md-3 col-lg-2 nav-item align-self-center">
+                                <a id="jump-to-today" href="#first-active-event" >Jump to Today</a>
+                            </li>
+                        <?php } ?>
                         <?php foreach ($uniqueMonth as $value) { ?>
-                            <li class="col-3 col-md-2 col-lg-1 nav-item">
+                            <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
                                 <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
                             </li>
                         <?php } ?>
@@ -225,14 +228,15 @@
     <script src="js/scripts.js"></script>
 
     <!--Scroll to earliest active event after submit-->
-    <?php if (isset($_GET["email"])) { ?>
+    <?php if (isset($_GET["email"]) && $data->getResourceList() != "429" &&
+        $data->getResourceList() != null) { ?>
         <script>
             jQuery(document).ready(function() {
                 setTimeout(function () {
                     jQuery("html, body").animate({
-                        scrollTop: jQuery("#first-active-event").offset().top - 65
+                        scrollTop: jQuery("#first-active-event").offset().top - 60
                     }, 800, "swing");
-                }, 400);
+                }, 800);
             });
         </script>
     <?php } ?>

@@ -1,5 +1,8 @@
 jQuery(document).ready(function () {
 
+    // cache
+    var $root = jQuery("html, body");
+
     // initiate jquery select2 plugin
     jQuery('#city-select').select2({
         minimumResultsForSearch: Infinity,
@@ -7,14 +10,13 @@ jQuery(document).ready(function () {
         theme: "bootstrap"
     });
 
-    muteDateHoursText();
-
     jQuery("#city-select").change(function() {
+
         if (jQuery("select[name=city-selector]").val() === "all") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").removeClass("display-none");
-
             scrollToEarliestEvent();
+
         } else if (jQuery("select[name=city-selector]").val() === "zurich") {
             jQuery(".Zurich").removeClass("display-none");
             jQuery(".Winterthur").addClass("display-none");
@@ -26,13 +28,13 @@ jQuery(document).ready(function () {
 
             scrollToEarliestEvent();
         }
-
         showHideSeparator();
+
         showHideH4WithMonth();
     });
 
-    // for caching purposes, better performance
-    var $root = jQuery("html, body");
+    // mute completed event dates
+    muteDateHoursText();
 
     jQuery("#jump-to-today").click(function () {
         scrollToEarliestEvent();
@@ -41,7 +43,9 @@ jQuery(document).ready(function () {
     });
 
     jQuery(".nav-link").click(function () {
-        scrollToEarliestEvent();
+        $root.animate({
+            scrollTop: jQuery(jQuery.attr(this, 'href')).offset().top - 60
+        }, 800);
 
         return false;
     });
@@ -49,7 +53,7 @@ jQuery(document).ready(function () {
     function scrollToEarliestEvent() {
         setTimeout(function () {
             $root.animate({
-                scrollTop: jQuery("#first-active-event").offset().top - 65
+                scrollTop: jQuery("#first-active-event").offset().top - 60
             }, 800, "swing");
         }, 400);
     }
