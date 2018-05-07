@@ -3,7 +3,7 @@
 
 class Scheduleit extends Helpers
 {
-    private $limit = "1000";
+    protected $limit = "1000";
     private $teacherGroupId = "10";
     private $languageGroupId = "822";
     private $courseGroupId = "809";
@@ -88,7 +88,6 @@ class Scheduleit extends Helpers
 
         $groupedDates = array();
 
-
         $i = 0;
         $j = 0;
 
@@ -132,108 +131,6 @@ class Scheduleit extends Helpers
         return $groupedDates;
     }
 
-    function generateDateRange()
-    {
-        $currentDate = new DateTime();
-        $startDate = new DateTime();
-        $endDate = new DateTime();
-
-        $yearFromTest = date("o", strtotime( $currentDate->format("Y-m-d") ));
-        $monthFromTest = date("m", strtotime( $currentDate->format("Y-m-d") ));
-        $dayFromTest = date("d", strtotime( $currentDate->format("Y-m-d") ));
-
-        $startDateMonth = (int) $monthFromTest - 2;
-        $endDateMonth = (int) $monthFromTest + 6;
-
-        $startDate = $startDate->setDate($yearFromTest, $startDateMonth, $dayFromTest)->format('Y-m-d');
-        $endDate = $endDate->setDate($yearFromTest, $endDateMonth, $dayFromTest)->format('Y-m-d');
-
-        $dateRange = "date_range_from=" . $startDate . "&date_range_to=" . $endDate;
-
-        return $dateRange;
-    }
-
-    function eventList()
-    {
-        if (isset($this->eventList) && count($this->eventList) > 0) {
-
-            return $this->eventList;
-
-        } else {
-
-            $teacherId = $this->getSingleTeacherData()["id"];
-            $dateRange = $this->generateDateRange();
-
-            try {
-                $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&$dateRange&limit=$this->limit&sort=date_start";
-                $eventDataResponse = $this->apiCall($eventDataEndpoint);
-
-                $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];
-            } catch (Exception $e) {
-                echo "Error while performing API call: " . $e;
-                die;
-            }
-
-            $eventId = [];
-            $eventTitle = [];
-            $eventStartEndTime = [];
-            $eventDates = [];
-            $eventDateEnd = [];
-            $eventMonths = [];
-            $eventOwners = [];
-
-            foreach ($eventData as $value) {
-                array_push($eventId, $value["id"]);
-                array_push($eventTitle, $value["title"]);
-
-                $startTime = new DateTime($value["date_start"]);
-                $endTime = new DateTime($value["date_end"]);
-                $startEndTime = $startTime->format("H:i") . " - " .
-                    $endTime->format("H:i");
-                array_push($eventStartEndTime, $startEndTime);
-
-                $date = $startTime->format("o-m-d");
-                array_push($eventDates, $date);
-
-                $month = $startTime->format("F");
-                array_push($eventMonths, $month);
-
-                array_push($eventDateEnd, $value["date_end"]);
-
-                array_push($eventOwners, $value["owner"]);
-            }
-            unset($value);
-
-            /**
-             * remove commas at the beginning and end of owner string
-             * (,1039,810,205,819,) to (1039,810,205,819)
-             */
-            foreach ($eventOwners as $key => $value) {
-                if (($value[0] == ",") && (substr($value, -1) == ",")) {
-                    $removeCommaAtStartAndEnd = substr($value, 1, -1);
-                    $eventOwners[$key] = $removeCommaAtStartAndEnd;
-                }
-            }
-            unset($value);
-
-            $uniqueMonths = array_unique($eventMonths, SORT_REGULAR);
-
-            $eventDetails = array(
-                "amountOfEvents" => count($eventData),
-                "id" => $eventId,
-                "title" => $eventTitle,
-                "dateEnd" => $eventDateEnd,
-                "startEndTime" => $eventStartEndTime,
-                "date" => $eventDates,
-                "month" => $eventMonths,
-                "uniqueMonth" => $uniqueMonths,
-                "owners" => $eventOwners
-            );
-
-            return $eventDetails;
-        }
-    }
-
     function getSingleTeacherData()
     {
         $teacherTypedInEmail = $this->formInputValidation($_GET["email"]);
@@ -262,6 +159,7 @@ class Scheduleit extends Helpers
     function populateResourceArrays($valueOwner, $groupId, $resourceArray, $value)
     {
         if (substr($valueOwner, 1, -1) === $groupId) {
+
             if ($value["email"] == "") {
                 $tempArray = array(
                     "id" => $value["id"],
@@ -278,6 +176,90 @@ class Scheduleit extends Helpers
         }
 
         return $resourceArray;
+    }
+
+    function eventList()
+    {
+        if (isset($this->eventList) && count($this->eventList) > 0) {
+
+            return $this->eventList;
+
+        } else {
+
+            $teacherId = $this->getSingleTeacherData()["id"];
+
+            try {
+                $eventDataEndpoint = "events?search_owner=$teacherId&fields=id,title,date_start,date_end,owner&search_date_start=2018-01-01&limit=$this->limit&sort=date_start";
+                $eventDataResponse = $this->apiCall($eventDataEndpoint);
+
+                $eventData = $eventDataResponse["_embedded"]["events"]["_embedded"]["data"];
+            } catch (Exception $e) {
+                echo "Error while performing API call: " . $e;
+                die;
+            }
+
+            $eventId = [];
+            $eventTitle = [];
+            $eventStartEndTime = [];
+            $eventDates = [];
+            $eventDateStart = [];
+            $eventDateEnd = [];
+            $eventMonths = [];
+            $eventOwners = [];
+
+            foreach ($eventData as $value) {
+                array_push($eventId, $value["id"]);
+                array_push($eventTitle, $value["title"]);
+
+                $startTime = new DateTime($value["date_start"]);
+                $endTime = new DateTime($value["date_end"]);
+                $startEndTime = $startTime->format("H:i") . " - " .
+                    $endTime->format("H:i");
+                array_push($eventStartEndTime, $startEndTime);
+
+                $date = $startTime->format("o-m-d");
+                array_push($eventDates, $date);
+
+                $month = $startTime->format("F");
+                array_push($eventMonths, $month);
+
+                array_push($eventDateStart, $value["date_start"]);
+
+                array_push($eventDateEnd, $value["date_end"]);
+
+                array_push($eventOwners, $value["owner"]);
+            }
+            unset($value);
+
+            /**
+             * remove commas at the beginning and end of owner string
+             * (,1039,810,205,819,) to (1039,810,205,819)
+             */
+            foreach ($eventOwners as $key => $value) {
+                if (($value[0] == ",") && (substr($value, -1) == ",")) {
+                    $removeCommaAtStartAndEnd = substr($value, 1, -1);
+                    $eventOwners[$key] = $removeCommaAtStartAndEnd;
+                }
+            }
+            unset($value);
+
+            $uniqueMonths = array_unique($eventMonths, SORT_REGULAR);
+
+            $eventDetails = array(
+                "amountOfEvents" => count($eventData),
+                "id" => $eventId,
+                "title" => $eventTitle,
+                "dateStart" => $eventDateStart,
+                "dateEnd" => $eventDateEnd,
+                "startEndTime" => $eventStartEndTime,
+                "date" => $eventDates,
+                "month" => $eventMonths,
+                "uniqueMonth" => $uniqueMonths,
+                "owners" => $eventOwners
+            );
+
+            return $eventDetails;
+        }
     }
 
     function getResourceList()
@@ -341,7 +323,7 @@ class Scheduleit extends Helpers
         }
     }
 
-    private function apiCall($endpoint)
+    protected function apiCall($endpoint)
     {
         $authCredentials = $this->userId . "_" . $this->username . ":" . $this->password;
 

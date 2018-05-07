@@ -2,6 +2,7 @@
     include_once "config.php";
     include_once "Helpers.php";
     include_once "Scheduleit.php";
+    include_once "Reports.php";
 
     $helpers = new Helpers();
 
@@ -10,6 +11,7 @@
         $firstActiveEvent = true;
 
         $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
+        $reports = new Reports(USER_ID, USERNAME, PASSWORD);
 
         $singleTeacherData = $data->getSingleTeacherData();
 
@@ -20,6 +22,7 @@
         $dateAndLastHour = $helpers->eventEndingDateAndLastHour($events);
 
         $reorganizedEventMonths = $data->reorganizeEventMonths($events);
+
     }
 ?>
 
@@ -80,9 +83,9 @@
     <!-- Begin page content -->
     <main role="main" class="container">
 
-        <?php if (isset($_GET["email"])) {
+        <?php if (isset($_GET["email"])) { ?>
 
-            if ($data->getResourceList() === "429") { ?>
+            <?php if ($data->getResourceList() === "429") { ?>
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
@@ -107,6 +110,18 @@
                     </div>
                 </div>
             <?php } else { ?>
+
+            <div>
+                <h4>Worked Hours</h4>
+                <p>
+                    From 2018-01-01 to Last day of previous month: <span class="font-weight-bold"><?php echo $reports->countHoursTillLastDayOfPrevMonth();?></span>
+                </p>
+                <p>
+                    From 2018-01-01 to Todays last completed event: <span class="font-weight-bold"><?php echo $reports->countHoursTillToday();?></span>
+                </p>
+            </div>
+
+            <hr>
 
             <div class="row row-no-gutters">
                 <div class="col-12">
