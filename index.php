@@ -114,10 +114,10 @@
             <div>
                 <h4>Worked Hours</h4>
                 <p>
-                    From 2018-01-01 to Last day of previous month: <span class="font-weight-bold"><?php echo $reports->countHoursTillLastDayOfPrevMonth();?></span>
+                    Till <?php echo $reports->countHoursTillLastDayOfPrevMonth()["date"]; ?> worked <?php echo $reports->countHoursTillLastDayOfPrevMonth()["hours"]; ?> hours, had <?php echo $reports->countHoursTillLastDayOfPrevMonth()["amountOfEvents"];?> lessons
                 </p>
                 <p>
-                    From 2018-01-01 to Todays last completed event: <span class="font-weight-bold"><?php echo $reports->countHoursTillToday();?></span>
+                    Till now worked <?php echo $reports->countHoursTillToday()["hours"]; ?> hours, had <?php echo $reports->countHoursTillToday()["amountOfEvents"]; ?> lessons
                 </p>
             </div>
 

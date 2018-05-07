@@ -15,6 +15,7 @@ class Reports extends Scheduleit
 
         $workedHours = 0;
         $workedMinutes = 0;
+        $eventCounter = 0;
 
         $lastDayOfPrevMonth = $currentDate->modify("last day of previous month")->format("Y-m-d H:i");
 
@@ -26,12 +27,19 @@ class Reports extends Scheduleit
 
                 $workedHours += $dateEnd->diff($dateStart)->h;
                 $workedMinutes += $dateEnd->diff($dateStart)->i;
+                $eventCounter++;
             }
         }
 
         $workedHours += round(($workedMinutes / 60), 2);
 
-        return $workedHours;
+        $result = array(
+            "date" => date("d.m.Y", strtotime($lastDayOfPrevMonth)),
+            "hours" => $workedHours,
+            "amountOfEvents" => $eventCounter
+        );
+
+        return $result;
     }
 
     function countHoursTillToday()
@@ -41,6 +49,7 @@ class Reports extends Scheduleit
 
         $workedHours = 0;
         $workedMinutes = 0;
+        $eventCounter = 0;
 
         foreach ($eventList["dateEnd"] as $key => $date) {
 
@@ -51,12 +60,18 @@ class Reports extends Scheduleit
 
                 $workedHours += $dateEnd->diff($dateStart)->h;
                 $workedMinutes += $dateEnd->diff($dateStart)->i;
+                $eventCounter++;
             }
 
         }
 
         $workedHours += round(($workedMinutes / 60), 2);
 
-        return $workedHours;
+        $result = array(
+            "hours" => $workedHours,
+            "amountOfEvents" => $eventCounter
+        );
+
+        return $result;
     }
 }
