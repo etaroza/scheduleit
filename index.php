@@ -62,7 +62,7 @@
                     <form action="" method="get" class="form-inline mr-auto mr-3 my-3 my-lg-0" id="emailForm">
                         <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
                                aria-describedby="teacherEmail" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
-                        <button class="btn btn-<?php isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
+                        <button class="btn btn-<?php echo isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
                     </form>
 
                     <?php if (isset($_GET["email"])) { ?>
