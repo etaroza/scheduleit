@@ -74,7 +74,7 @@
                                 <option value="winterthur">Winterthur</option>
                             </select>
                             &nbsp;
-                            <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change request</a>
+                            <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Request changes</a>
                         </div>
                     <?php } ?>
                 </div>
@@ -164,7 +164,7 @@
                                                     $isPast = $currentDate > new DateTime($dateAndLastHour[$i][$j][0]);
                                                  ?>
                                                 <div class="row <?php echo $school ?> <?php echo $isPast ? 'text-muted':'' ?>">
-                                                    <div class="col-3 col-sm-2 event-date">
+                                                    <div class="col-3 col-sm-2 col-md-2 event-date">
                                                         <?php if (!($j > 0)) { ?>
                                                             <div class="event-day">
                                                                 <?php echo date("D", strtotime($date)) ?>
@@ -175,22 +175,34 @@
                                                             </div>
                                                         <?php } ?>
                                                     </div>
-                                                    <div class="col-3 col-sm-3 col-md-2 event-hours">
+                                                    <div class="col-9 col-sm-10 col-md-2 event-hours">
                                                         <div>
                                                             <?php echo $hours ?>
                                                         </div>
                                                         <div>
                                                             <?php echo $room ?>
                                                         </div>
+                                                        <div class="d-md-none">
+                                                            <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
+                                                                <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
+                                                                <div>
+                                                                    <?php echo "{$language}" ?> 
+                                                                    <?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?>
+                                                                </div>
+                                                                <div>
+                                                                    <?php echo "{$mode}: {$students}" ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-6 col-sm-7 col-md-8 padding-right-0 event-message">
+                                                    <div class="d-none d-md-block col-md-8">
                                                         <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
                                                             <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                             <div>
-                                                                <h4>
+                                                                <h5>
                                                                     <?php echo "{$language}" ?> 
                                                                     <small><?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?></small>
-                                                                </h4>
+                                                                </h5>
                                                             </div>
                                                             <div>
                                                                 <?php echo "{$mode}: {$students}" ?>
