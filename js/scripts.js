@@ -53,7 +53,7 @@ jQuery(document).ready(function () {
     function scrollToEarliestEvent() {
         setTimeout(function () {
             $root.animate({
-                scrollTop: jQuery("#first-active-event").offset().top - 60
+                scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
             }, 800, "swing");
         }, 400);
     }

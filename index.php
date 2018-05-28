@@ -258,7 +258,7 @@
             jQuery(document).ready(function() {
                 setTimeout(function () {
                     jQuery("html, body").animate({
-                        scrollTop: jQuery(".first-active-event").offset().top - 60
+                        scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
                     }, 800, "swing");
                 }, 800);
             });
