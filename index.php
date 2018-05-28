@@ -116,12 +116,9 @@
             <?php } else { ?>
 
             <div>
-                <h4>Worked Hours</h4>
+                <h4>In total <?php echo $reports->countHoursTillToday()["hours"]; ?> hours, had <?php echo $reports->countHoursTillToday()["amountOfEvents"]; ?> lessons.</h4>
                 <p>
-                    Till <?php echo $reports->countHoursTillLastDayOfPrevMonth()["date"]; ?> worked <?php echo $reports->countHoursTillLastDayOfPrevMonth()["hours"]; ?> hours, had <?php echo $reports->countHoursTillLastDayOfPrevMonth()["amountOfEvents"];?> lessons
-                </p>
-                <p>
-                    Till now worked <?php echo $reports->countHoursTillToday()["hours"]; ?> hours, had <?php echo $reports->countHoursTillToday()["amountOfEvents"]; ?> lessons
+                    Till <?php echo $reports->countHoursTillLastDayOfPrevMonth()["date"]; ?>: <?php echo $reports->countHoursTillLastDayOfPrevMonth()["hours"]; ?> hours, had <?php echo $reports->countHoursTillLastDayOfPrevMonth()["amountOfEvents"];?> lessons.
                 </p>
             </div>
 
