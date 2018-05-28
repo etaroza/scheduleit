@@ -8,7 +8,7 @@
 
     if (isset($_GET["email"])) {
         $currentDate = new DateTime();
-        $firstActiveEvent = true;
+        $firstActiveEventSet = false;
 
         $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
         $reports = new Reports(USER_ID, USERNAME, PASSWORD);
@@ -156,8 +156,10 @@
                                                     $school = $events[$i][$j][7];
                                                     $room = $events[$i][$j][8];
                                                     $students = $events[$i][$j][9];
+
+                                                    $isPast = $currentDate > new DateTime($dateAndLastHour[$i][$j][0]);
                                                  ?>
-                                                <div class="row <?php echo $school ?>">
+                                                <div class="row <?php echo $school ?> <?php echo $isPast ? 'text-muted':'' ?>">
                                                     <div class="col-3 col-sm-2 event-date">
                                                         <?php if (!($j > 0)) { ?>
                                                             <div class="event-day">
@@ -167,9 +169,6 @@
                                                                 <?php echo date("d", strtotime($date))
                                                                     . " " . date("M", strtotime($date)) ?>
                                                             </div>
-                                                            <div>
-                                                                <?php echo $school ?>
-                                                            </div>
                                                         <?php } ?>
                                                     </div>
                                                     <div class="col-3 col-sm-3 col-md-2 event-hours">
@@ -177,21 +176,19 @@
                                                             <?php echo $hours ?>
                                                         </div>
                                                         <div>
-                                                            <?php echo $language ?>
-                                                        </div>
-                                                        <div>
                                                             <?php echo $room ?>
                                                         </div>
                                                     </div>
                                                     <div class="col-6 col-sm-7 col-md-8 padding-right-0 event-message">
-                                                        <div <?php echo ($firstActiveEvent === true) ? "id='first-active-event'" : "" ?> class="event-details <?php echo ($currentDate > new DateTime($dateAndLastHour[$i][$j][0])) ? 'text-muted':'' ?>">
-                                                            <span>
-                                                                <?php echo "{$title}. {$course} {$intensity}."
+                                                        <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
+                                                            <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
+                                                            <div>
+                                                                <?php echo "{$language} {$course} {$intensity}. {$school}"
                                                                 ?>
-                                                            </span>
-                                                            <span>
+                                                            </div>
+                                                            <div>
                                                                 <?php echo "{$mode}: {$students}" ?>
-                                                            </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
