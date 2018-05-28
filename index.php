@@ -183,7 +183,7 @@
                                                             <?php echo $room ?>
                                                         </div>
                                                         <div class="d-md-none">
-                                                            <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
+                                                            <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?>>
                                                                 <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                                 <div>
                                                                     <?php echo "{$language}" ?> 
@@ -199,10 +199,10 @@
                                                         <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
                                                             <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                             <div>
-                                                                <h5>
+                                                                <h6>
                                                                     <?php echo "{$language}" ?> 
                                                                     <small><?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?></small>
-                                                                </h5>
+                                                                </h6>
                                                             </div>
                                                             <div>
                                                                 <?php echo "{$mode}: {$students}" ?>
