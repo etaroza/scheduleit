@@ -184,7 +184,6 @@
                                                         </div>
                                                         <div class="d-md-none">
                                                             <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "class='first-active-event'" : "" ?>>
-                                                                <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                                 <div>
                                                                     <?php echo "{$language}" ?> 
                                                                     <?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?>

@@ -212,13 +212,6 @@ footer {
     padding-bottom: 60px;
 }
 
-.event-date, .event-hours {
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: .2rem;
-    white-space: nowrap;
-}
-
 .event-numerical-day-month, .room {
     font-size: 1.2rem;
 }
