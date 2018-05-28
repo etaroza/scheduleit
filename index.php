@@ -31,10 +31,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="schedule for teachers">
+    <meta name="description" content="Schedule of courses and lessons.">
     <meta name="author" content="">
+    <meta name="robots" CONTENT="NOINDEX,NOFOLLOW">
 
-    <title>Teacher schedule</title>
+    <title>VOX-Sprachschule Schedule</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
@@ -49,8 +50,8 @@
     <header>
         <nav class="navbar fixed-top navbar-expand-lg navbar-light navbar-bg">
             <div class="container">
-                <a class="navbar-brand" href="/">
-                    <img src="img/logo.png" alt="vox-sprachschule logo">
+                <a class="navbar-brand" href="https://www.vox-sprachschule.ch">
+                    <img src="img/logo.png" alt="VOX-Sprachschule logo">
                 </a>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-dropdown-form" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +69,7 @@
                         <div class="navbar-nav mr-3">
                             <label for="city-select">Filter by school: </label>
                             <select class="city-select my-1 mr-sm-2" name="city-selector" id="city-select">
-                                <option></option>
-                                <option value="all">All</option>
+                                <option value="all" selected="">All</option>
                                 <option value="zurich">Zurich</option>
                                 <option value="winterthur">Winterthur</option>
                             </select>
@@ -218,8 +218,8 @@
                 <nav id="navbar-months" class="col-12 navbar navbar-light">
                     <ul class="nav nav-pills">
                         <?php if (isset($_GET["email"])) { ?>
-                            <li class="col-3 col-md-3 col-lg-2 nav-item align-self-center">
-                                <a id="jump-to-today" href="#first-active-event" >Jump to Today</a>
+                            <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
+                                <a id="jump-to-today" href="#first-active-event" class="btn btn-outline-light">Today</a>
                             </li>
                         <?php } ?>
                         <?php foreach ($uniqueMonth as $value) { ?>

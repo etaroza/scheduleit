@@ -159,7 +159,7 @@ footer {
 }
 
 .nav-item {
-    padding: 0;
+    padding: 5px;
 }
 .nav-pills {
     width: inherit;
@@ -170,27 +170,11 @@ footer {
     color: #a0913d;
 }
 
-#jump-to-today {
-    color: #b4b7ba;
-    display: block;
-    text-align: center;
-    padding: .5rem 1rem;
-}
-
-#jump-to-today:hover {
-    color: #fff;
-    text-decoration: none;
-}
-
 
 @media only screen and (max-width: 576px){
     #navbar-months {
         padding-right: 0.938em;
         padding-left: 0.938em;
-    }
-
-    .nav-link, #jump-to-today {
-        padding: .3em .2rem;
     }
 }
 
@@ -251,6 +235,7 @@ footer {
     padding-left: 0;
     padding-right: 0;
     padding-top: .2rem;
+    white-space: nowrap;
 }
 
 .event-date h2, .event-hours h2 {
