@@ -62,7 +62,7 @@
                     <form action="" method="get" class="form-inline mr-auto mr-3 my-3 my-lg-0" id="emailForm">
                         <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
                                aria-describedby="teacherEmail" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
-                        <button class="btn btn-outline mt-3 my-sm-0" type="submit">Submit</button>
+                        <button class="btn btn-<?php isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
                     </form>
 
                     <?php if (isset($_GET["email"])) { ?>
@@ -73,6 +73,8 @@
                                 <option value="zurich">Zurich</option>
                                 <option value="winterthur">Winterthur</option>
                             </select>
+                            &nbsp;
+                            <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change request</a>
                         </div>
                     <?php } ?>
                 </div>
@@ -89,7 +91,7 @@
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
-                            Scheduling service is currently unavailable, try again later.
+                            Schedule is currently unavailable, try again later.
                         </div>
                     </div>
                 </div>
@@ -97,7 +99,8 @@
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noTeacher" class="alert alert-danger" role="alert">
-                            Can not find teacher by that email.
+                            Can not find a schedule by that email. We probably have your wrong email, 
+                            please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a> about this.
                         </div>
                     </div>
                 </div>
@@ -105,7 +108,8 @@
                 <div class="row">
                     <div class="col-12 col-sm-10 col-lg-7">
                         <div id="noEvents" class="alert alert-warning" role="alert">
-                            This teacher has no scheduled events.
+                            No scheduled events for this email. If you think that's wrong, 
+                            please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a>.
                         </div>
                     </div>
                 </div>
@@ -183,8 +187,10 @@
                                                         <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
                                                             <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                             <div>
-                                                                <?php echo "{$language} {$course} {$intensity}. {$school}"
-                                                                ?>
+                                                                <h4>
+                                                                    <?php echo "{$language}" ?> 
+                                                                    <small><?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?></small>
+                                                                </h4>
                                                             </div>
                                                             <div>
                                                                 <?php echo "{$mode}: {$students}" ?>
