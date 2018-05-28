@@ -183,7 +183,7 @@
                                                             <?php echo $room ?>
                                                         </div>
                                                         <div class="d-md-none">
-                                                            <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?>>
+                                                            <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "class='first-active-event'" : "" ?>>
                                                                 <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                                 <div>
                                                                     <?php echo "{$language}" ?> 
@@ -196,7 +196,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="d-none d-md-block col-md-8">
-                                                        <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "id='first-active-event'" : "" ?> class="event-details">
+                                                        <div class="event-details <?php echo ((!$firstActiveEventSet && !$isPast)) ? "first-active-event" : "" ?>">
                                                             <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                             <div>
                                                                 <h6>
@@ -228,7 +228,8 @@
                     <ul class="nav nav-pills">
                         <?php if (isset($_GET["email"])) { ?>
                             <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
-                                <a id="jump-to-today" href="#first-active-event" class="btn btn-outline-light">Today</a>
+                                <a id="jump-to-today-small" href="javascript:void(0)" class="d-md-none btn btn-outline-light">Today</a>
+                                <a id="jump-to-today" href="javascript:void(0)" class="d-none d-md-inline-block btn btn-outline-light">Today</a>
                             </li>
                         <?php } ?>
                         <?php foreach ($uniqueMonth as $value) { ?>
@@ -258,7 +259,7 @@
             jQuery(document).ready(function() {
                 setTimeout(function () {
                     jQuery("html, body").animate({
-                        scrollTop: jQuery("#first-active-event").offset().top - 60
+                        scrollTop: jQuery(".first-active-event").offset().top - 60
                     }, 800, "swing");
                 }, 800);
             });

@@ -36,7 +36,7 @@ jQuery(document).ready(function () {
     // mute completed event dates
     muteDateHoursText();
 
-    jQuery("#jump-to-today").click(function () {
+    jQuery("#jump-to-today,#jump-to-today-small").click(function () {
         scrollToEarliestEvent();
 
         return false;
