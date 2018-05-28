@@ -145,61 +145,55 @@
                                     if ($reorganizedEventMonths[$i] == $value) { ?>
                                         <div class="separator">
                                              <?php for ($j = 0; $j < count($events[$i]); $j++) { ?>
-                                                <div class="row <?php echo $events[$i][$j][7] ?>">
+                                                 <?php 
+                                                    $date = $events[$i][$j][0];
+                                                    $hours = $events[$i][$j][1];
+                                                    $language = $events[$i][$j][2];
+                                                    $course = $events[$i][$j][3];
+                                                    $intensity = $events[$i][$j][4];
+                                                    $mode = $events[$i][$j][5];
+                                                    $title = $events[$i][$j][6];
+                                                    $school = $events[$i][$j][7];
+                                                    $room = $events[$i][$j][8];
+                                                    $students = $events[$i][$j][9];
+                                                 ?>
+                                                <div class="row <?php echo $school ?>">
                                                     <div class="col-3 col-sm-2 event-date">
-                                                        <h2>
-                                                            <?php if (!($j > 0)) { ?>
-                                                                <span class="event-day">
-                                                                    <?php echo date("D", strtotime($events[$i][$j][0])) ?>
-                                                                </span>
-                                                                <span class="event-numerical-day-month">
-                                                                    <?php echo date("d", strtotime($events[$i][$j][0]))
-                                                                        . " " . date("M", strtotime($events[$i][$j][0])) ?>
-                                                                </span>
-                                                            <?php } ?>
-                                                        </h2>
+                                                        <?php if (!($j > 0)) { ?>
+                                                            <div class="event-day">
+                                                                <?php echo date("D", strtotime($date)) ?>
+                                                            </div>
+                                                            <div class="event-numerical-day-month">
+                                                                <?php echo date("d", strtotime($date))
+                                                                    . " " . date("M", strtotime($date)) ?>
+                                                            </div>
+                                                            <div>
+                                                                <?php echo $school ?>
+                                                            </div>
+                                                        <?php } ?>
                                                     </div>
-                                                    <div class="col-2 col-sm-3 col-md-2 event-hours">
-                                                        <h2>
+                                                    <div class="col-3 col-sm-3 col-md-2 event-hours">
+                                                        <div>
+                                                            <?php echo $hours ?>
+                                                        </div>
+                                                        <div>
+                                                            <?php echo $language ?>
+                                                        </div>
+                                                        <div>
+                                                            <?php echo $room ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 col-sm-7 col-md-8 padding-right-0 event-message">
+                                                        <div <?php echo ($firstActiveEvent === true) ? "id='first-active-event'" : "" ?> class="event-details <?php echo ($currentDate > new DateTime($dateAndLastHour[$i][$j][0])) ? 'text-muted':'' ?>">
                                                             <span>
-                                                                <?php echo $events[$i][$j][1] ?>
+                                                                <?php echo "{$title}. {$course} {$intensity}."
+                                                                ?>
                                                             </span>
-                                                        </h2>
+                                                            <span>
+                                                                <?php echo "{$mode}: {$students}" ?>
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                    <?php if ($currentDate > new DateTime($dateAndLastHour[$i][$j][0])) { ?>
-                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0 event-message">
-                                                            <div class="event-details text-muted">
-                                                                <span>
-                                                                    <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
-                                                                        $events[$i][$j][4] . " | " . $events[$i][$j][7] . " - " .
-                                                                        $events[$i][$j][5] . " - " . $events[$i][$j][6]
-                                                                    ?>
-                                                                </span>
-                                                                <span>
-                                                                    <?php echo $events[$i][$j][8] . ": " . $events[$i][$j][9] ?>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    <?php } else { ?>
-                                                        <div class="col-7 col-sm-7 col-md-8 padding-right-0 event-message">
-                                                            <?php if ($firstActiveEvent === true) {
-                                                                $firstActiveEvent = false; ?>
-                                                                <div id="first-active-event" class="event-details">
-                                                            <?php } else { ?>
-                                                                <div class="event-details">
-                                                            <?php } ?>
-                                                                <span>
-                                                                    <?php echo $events[$i][$j][2] . " " . $events[$i][$j][3] . " " .
-                                                                        $events[$i][$j][4] . " | " . $events[$i][$j][7] . " - " .
-                                                                        $events[$i][$j][5] . " - " . $events[$i][$j][6]
-                                                                    ?>
-                                                                </span>
-                                                                <span>
-                                                                    <?php echo $events[$i][$j][8] . ": " . $events[$i][$j][9] ?>
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    <?php } ?>
                                                 </div>
                                             <?php } ?>
                                         </div>

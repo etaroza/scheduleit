@@ -238,17 +238,7 @@ footer {
     white-space: nowrap;
 }
 
-.event-date h2, .event-hours h2 {
-    font-weight: normal;
-    font-size: 1rem;
-    padding-top: .2rem;
-}
-
-.event-date h2 span, .event-details span, .event-hours h2 span {
-    display: block;
-}
-
-.event-numerical-day-month {
+.event-numerical-day-month, .room {
     font-size: 1.2rem;
 }
 
