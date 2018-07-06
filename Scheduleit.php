@@ -137,12 +137,15 @@ class Scheduleit extends Helpers
 
         $resources = $this->resourceList["teachers"];
 
-        $teacherKeyInList = array_search($teacherTypedInEmail, array_column($resources, "email"));
+        $teacherKeyInList1 = array_search($teacherTypedInEmail, array_column($resources, "email"));
+        $teacherKeyInList2 = array_search($teacherTypedInEmail, array_column($resources, "email2"));
+
+        $teacherKeyInList=($teacherKeyInList1===false?$teacherKeyInList2:$teacherKeyInList1);
 
         if ($teacherKeyInList != null) {
             $teacherId = $resources[$teacherKeyInList]["id"];
             $teacherName = $resources[$teacherKeyInList]["name"];
-            $teacherEmail = $resources[$teacherKeyInList]["email"];
+            $teacherEmail = ($resources[$teacherKeyInList]["email"]!=''?$resources[$teacherKeyInList]["email"]:$resources[$teacherKeyInList]["email2"]);
 
             $singleTeacherData = array(
                 "id" => $teacherId,
@@ -169,7 +172,8 @@ class Scheduleit extends Helpers
                 $tempArray = array(
                     "id" => $value["id"],
                     "name" => $value["name"],
-                    "email" => $value["email"]
+                    "email" => $value["email"],
+                    "email2" => $value["data2"]
                 );
             }
             array_push($resourceArray, $tempArray);
@@ -271,7 +275,7 @@ class Scheduleit extends Helpers
         } else {
 
             try {
-                $resourceListEndpoint = "resources?fields=id,name,email,owner&limit=$this->limit";
+                $resourceListEndpoint = "resources?fields=id,name,email,owner,data2&limit=$this->limit";
                 $resourceListResponse = $this->apiCall($resourceListEndpoint);
 
                 /**
