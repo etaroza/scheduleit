@@ -163,7 +163,7 @@ class Scheduleit extends Helpers
     {
         if (substr($valueOwner, 1, -1) === $groupId) {
 
-            if ($value["email"] == "" && $this->$teacherGroupId != $groupId) {
+            if ($value["email"] == "" && $this->teacherGroupId != $groupId) {
                 $tempArray = array(
                     "id" => $value["id"],
                     "name" => $value["name"]
