@@ -109,8 +109,8 @@ class Scheduleit extends Helpers
                     $groupedDates[$i][$j][] = $mode[$key];
                     $groupedDates[$i][$j][] = $this->eventList["title"][$key];
 
-                    if (count($externalLocation) > 0) {
-                        $groupedDates[$i][$j][] = "External";
+                    if (count($zurichRoom) == 0 && count($winterthurRoom) == 0) {
+                        $groupedDates[$i][$j][] = $externalLocation;
                         $groupedDates[$i][$j][] = "";
                     } else {
                         if (count($zurichRoom) == 0) {
