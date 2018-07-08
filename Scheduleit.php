@@ -112,17 +112,22 @@ class Scheduleit extends Helpers
                     if (isset($externalLocation[$key])) {
                         $groupedDates[$i][$j][] = $externalLocation[$key];
                         $groupedDates[$i][$j][] = "";
+                        $groupedDates[$i][$j][] = "External";
                     } else {
                         if (count($zurichRoom) == 0) {
                             $groupedDates[$i][$j][] = "Winterthur";
 
                             !isset($winterthurRoom[$key]) || trim($winterthurRoom[$key])=== "" ?
                                 $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $winterthurRoom[$key];
+
+                            $groupedDates[$i][$j][] = "Winterthur";
                         } else {
                             $groupedDates[$i][$j][] = "Zurich";
 
                             !isset($zurichRoom[$key]) || trim($zurichRoom[$key])=== "" ?
                                 $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $zurichRoom[$key];
+
+                            $groupedDates[$i][$j][] = "Zurich";
                         };
                     }
 

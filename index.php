@@ -142,7 +142,8 @@
                                      * [6] - title (G1243)
                                      * [7] - String "Zurich" or "Winterthur"
                                      * [8] - room (Room 2)
-                                     * [9] - customers (Nicolas V., Vlaemynck J.)
+                                     * [9] - school id
+                                     * [10] - customers (Nicolas V., Vlaemynck J.)
                                      */
                                     if ($reorganizedEventMonths[$i] == $value) { ?>
                                         <div class="separator">
@@ -157,11 +158,12 @@
                                                     $title = $events[$i][$j][6];
                                                     $school = $events[$i][$j][7];
                                                     $room = $events[$i][$j][8];
+                                                    $schoolid = $events[$i][$j][9];
                                                     $students = $events[$i][$j][9];
 
                                                     $isPast = $currentDate > new DateTime($dateAndLastHour[$i][$j][0]);
                                                  ?>
-                                                <div class="row <?php echo $school ?> <?php echo $isPast ? 'text-muted':'' ?>">
+                                                <div class="row <?php echo $schoolid ?> <?php echo $isPast ? 'text-muted':'' ?>">
                                                     <div class="col-3 col-sm-2 col-md-2 event-date">
                                                         <?php if (!($j > 0)) { ?>
                                                             <div class="event-day">
