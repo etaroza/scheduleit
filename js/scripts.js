@@ -15,16 +15,25 @@ jQuery(document).ready(function () {
         if (jQuery("select[name=city-selector]").val() === "all") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").removeClass("display-none");
+            jQuery(".External").removeClass("display-none");
             scrollToEarliestEvent();
 
         } else if (jQuery("select[name=city-selector]").val() === "zurich") {
             jQuery(".Zurich").removeClass("display-none");
             jQuery(".Winterthur").addClass("display-none");
+            jQuery(".External").addClass("display-none");
 
             scrollToEarliestEvent();
         } else if (jQuery("select[name=city-selector]").val() === "winterthur") {
             jQuery(".Winterthur").removeClass("display-none");
             jQuery(".Zurich").addClass("display-none");
+            jQuery(".External").addClass("display-none");
+
+            scrollToEarliestEvent();
+        } else if (jQuery("select[name=city-selector]").val() === "external") {
+            jQuery(".External").removeClass("display-none");
+            jQuery(".Zurich").addClass("display-none");
+            jQuery(".Winterthur").addClass("display-none");
 
             scrollToEarliestEvent();
         }
