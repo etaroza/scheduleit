@@ -12,6 +12,7 @@ class Scheduleit extends Helpers
     private $zurichRoomGroupId = "193";
     private $winterthurRoomGroupId = "282";
     private $customerGroupId = "868";
+    private $externalLocationGroupId = "806";
 
     private $userId;
     private $username;
@@ -37,6 +38,7 @@ class Scheduleit extends Helpers
         $modeList = $this->resourceList["modes"];
         $zurichRoomList = $this->resourceList["zurichRooms"];
         $winterthurRoomList = $this->resourceList["winterthurRooms"];
+        $externalLocationsList = $this->resourceList["externalLocations"];
         $customerList = $this->resourceList["customers"];
 
         $explodeOwnerIds = [];
@@ -52,6 +54,7 @@ class Scheduleit extends Helpers
         $modeTemp = $this->searchInArray($explodeOwnerIds, $modeList);
         $zurichRoomTemp = $this->searchInArray($explodeOwnerIds, $zurichRoomList);
         $winterthurRoomTemp = $this->searchInArray($explodeOwnerIds, $winterthurRoomList);
+        $externalLocationTemp = $this->searchInArray($explodeOwnerIds, $externalLocationsList);
         $customerTemp = $this->searchInArray($explodeOwnerIds, $customerList);
 
         $customerTemp = $this->shortenNames($customerTemp);
@@ -62,10 +65,11 @@ class Scheduleit extends Helpers
         $mode = $this->implode($modeTemp);
         $zurichRoom = $this->implode($zurichRoomTemp);
         $winterthurRoom = $this->implode($winterthurRoomTemp);
+        $externalLocation = $this->implode($externalLocationTemp);
         $customer = $this->implode($customerTemp);
 
         $groupMessagesByDate = $this->groupMessagesByDate($this->eventList["date"], $language, $course,
-            $intensity, $mode, $zurichRoom, $winterthurRoom, $customer);
+            $intensity, $mode, $zurichRoom, $winterthurRoom, $externalLocation, $customer);
 
         return $groupMessagesByDate;
     }
@@ -82,7 +86,7 @@ class Scheduleit extends Helpers
     }
 
     function groupMessagesByDate($dates, $language, $course,
-                                 $intensity, $mode, $zurichRoom, $winterthurRoom, $customer)
+                                 $intensity, $mode, $zurichRoom, $winterthurRoom, $externalLocation, $customer)
     {
         $uniqueDates = array_unique($dates);
 
@@ -105,17 +109,22 @@ class Scheduleit extends Helpers
                     $groupedDates[$i][$j][] = $mode[$key];
                     $groupedDates[$i][$j][] = $this->eventList["title"][$key];
 
-                    if (count($zurichRoom) == 0) {
-                        $groupedDates[$i][$j][] = "Winterthur";
-
-                        !isset($winterthurRoom[$key]) || trim($winterthurRoom[$key])=== "" ?
-                            $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $winterthurRoom[$key];
+                    if (count($externalLocation) > 0) {
+                        $groupedDates[$i][$j][] = "External";
+                        $groupedDates[$i][$j][] = "";
                     } else {
-                        $groupedDates[$i][$j][] = "Zurich";
+                        if (count($zurichRoom) == 0) {
+                            $groupedDates[$i][$j][] = "Winterthur";
 
-                        !isset($zurichRoom[$key]) || trim($zurichRoom[$key])=== "" ?
-                            $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $zurichRoom[$key];
-                    };
+                            !isset($winterthurRoom[$key]) || trim($winterthurRoom[$key])=== "" ?
+                                $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $winterthurRoom[$key];
+                        } else {
+                            $groupedDates[$i][$j][] = "Zurich";
+
+                            !isset($zurichRoom[$key]) || trim($zurichRoom[$key])=== "" ?
+                                $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $zurichRoom[$key];
+                        };
+                    }
 
                     $groupedDates[$i][$j][] = $customer[$key];
 
@@ -299,6 +308,7 @@ class Scheduleit extends Helpers
             $customers = [];
             $zurichRooms = [];
             $winterthurRooms = [];
+            $externalLocations = [];
 
             foreach ($resourceListData as $value) {
                 $teachers = $this->populateResourceArrays($value["owner"], $this->teacherGroupId, $teachers, $value);
@@ -309,6 +319,7 @@ class Scheduleit extends Helpers
                 $customers = $this->populateResourceArrays($value["owner"], $this->customerGroupId, $customers, $value);
                 $zurichRooms = $this->populateResourceArrays($value["owner"], $this->zurichRoomGroupId, $zurichRooms, $value);
                 $winterthurRooms = $this->populateResourceArrays($value["owner"], $this->winterthurRoomGroupId, $winterthurRooms, $value);
+                $externalLocations = $this->populateResourceArrays($value["owner"], $this->externalLocationGroupId, $externalLocations, $value);
             }
             unset($value);
 
@@ -320,7 +331,8 @@ class Scheduleit extends Helpers
                 "modes" => $modes,
                 "customers" => $customers,
                 "zurichRooms" => $zurichRooms,
-                "winterthurRooms" => $winterthurRooms
+                "winterthurRooms" => $winterthurRooms,
+                "externalLocations" => $externalLocations
             );
 
             return $resourceData;

@@ -72,6 +72,7 @@
                                 <option value="all" selected="">All</option>
                                 <option value="zurich">Zurich</option>
                                 <option value="winterthur">Winterthur</option>
+                                <option value="external">External</option>
                             </select>
                             &nbsp;
                             <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Request changes</a>
