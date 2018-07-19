@@ -15,7 +15,7 @@
 
         $singleTeacherData = $data->getSingleTeacherData();
 
-        $uniqueMonth = $data->eventList()["uniqueMonth"];
+        $uniqueMonth = array_unique($data->removeEventsFromPast(3, $data->eventList())['month'], SORT_REGULAR);
 
         $events = $data->prepareTeacherEventsData();
 
@@ -25,8 +25,7 @@
 
     }
 ?>
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -159,7 +158,7 @@
                                                     $school = $events[$i][$j][7];
                                                     $room = $events[$i][$j][8];
                                                     $schoolid = $events[$i][$j][9];
-                                                    $students = $events[$i][$j][9];
+                                                    $students = $events[$i][$j][10];
 
                                                     $isPast = $currentDate > new DateTime($dateAndLastHour[$i][$j][0]);
                                                  ?>

@@ -41,21 +41,22 @@ class Scheduleit extends Helpers
         $externalLocationsList = $this->resourceList["externalLocations"];
         $customerList = $this->resourceList["customers"];
 
-        $explodeOwnerIds = [];
+        $ownersOfEveryEventWithEventIndexMaintained = [];
 
-        foreach ($this->eventList["owners"] as $key => $value) {
-            array_push($explodeOwnerIds, explode(',', $value));
+        $eventDetails = $this->removeEventsFromPast(3, $this->eventList);
+
+        foreach ($eventDetails["owners"] as $value) {
+            array_push($ownersOfEveryEventWithEventIndexMaintained, explode(',', $value));
         }
-        unset($value);
 
-        $languageTemp = $this->searchInArray($explodeOwnerIds, $languageList);
-        $courseTemp = $this->searchInArray($explodeOwnerIds, $courseList);
-        $intensityTemp = $this->searchInArray($explodeOwnerIds, $intensityList);
-        $modeTemp = $this->searchInArray($explodeOwnerIds, $modeList);
-        $zurichRoomTemp = $this->searchInArray($explodeOwnerIds, $zurichRoomList);
-        $winterthurRoomTemp = $this->searchInArray($explodeOwnerIds, $winterthurRoomList);
-        $externalLocationTemp = $this->searchInArray($explodeOwnerIds, $externalLocationsList);
-        $customerTemp = $this->searchInArray($explodeOwnerIds, $customerList);
+        $languageTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $languageList);
+        $courseTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $courseList);
+        $intensityTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $intensityList);
+        $modeTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $modeList);
+        $zurichRoomTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $zurichRoomList);
+        $winterthurRoomTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $winterthurRoomList);
+        $externalLocationTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $externalLocationsList);
+        $customerTemp = $this->searchInArray($ownersOfEveryEventWithEventIndexMaintained, $customerList);
 
         $customerTemp = $this->shortenNames($customerTemp);
 
@@ -68,7 +69,7 @@ class Scheduleit extends Helpers
         $externalLocation = $this->implode($externalLocationTemp);
         $customer = $this->implode($customerTemp);
 
-        $groupMessagesByDate = $this->groupMessagesByDate($this->eventList["date"], $language, $course,
+        $groupMessagesByDate = $this->groupMessagesByDate($eventDetails, $language, $course,
             $intensity, $mode, $zurichRoom, $winterthurRoom, $externalLocation, $customer);
 
         return $groupMessagesByDate;
@@ -85,9 +86,10 @@ class Scheduleit extends Helpers
         return $reorganizedEventMonths;
     }
 
-    function groupMessagesByDate($dates, $language, $course,
+    function groupMessagesByDate($events, $language, $course,
                                  $intensity, $mode, $zurichRoom, $winterthurRoom, $externalLocation, $customer)
     {
+        $dates = $events['date'];
         $uniqueDates = array_unique($dates);
 
         $groupedDates = array();
@@ -102,33 +104,31 @@ class Scheduleit extends Helpers
                 if($uniqueDate == $date) {
 
                     $groupedDates[$i][$j][] = $date;
-                    $groupedDates[$i][$j][] = $this->eventList["startEndTime"][$key];
+                    $groupedDates[$i][$j][] = $events["startEndTime"][$key];
                     $groupedDates[$i][$j][] = $language[$key];
                     $groupedDates[$i][$j][] = $course[$key];
                     $groupedDates[$i][$j][] = $intensity[$key];
                     $groupedDates[$i][$j][] = $mode[$key];
-                    $groupedDates[$i][$j][] = $this->eventList["title"][$key];
+                    $groupedDates[$i][$j][] = $events["title"][$key];
 
-                    if (isset($externalLocation[$key])) {
+                    if (isset($externalLocation[$key]) && $externalLocation[$key] != '') {
                         $groupedDates[$i][$j][] = $externalLocation[$key];
                         $groupedDates[$i][$j][] = "";
                         $groupedDates[$i][$j][] = "External";
-                    } else {
-                        if (count($zurichRoom) == 0) {
-                            $groupedDates[$i][$j][] = "Winterthur";
+                    } else if (isset($zurichRoom[$key]) && trim($zurichRoom[$key]) != '') {
+                        $groupedDates[$i][$j][] = "Zurich";
 
-                            !isset($winterthurRoom[$key]) || trim($winterthurRoom[$key])=== "" ?
-                                $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $winterthurRoom[$key];
+                        !isset($zurichRoom[$key]) || trim($zurichRoom[$key])=== "" ?
+                            $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $zurichRoom[$key];
 
-                            $groupedDates[$i][$j][] = "Winterthur";
-                        } else {
-                            $groupedDates[$i][$j][] = "Zurich";
+                        $groupedDates[$i][$j][] = "Zurich";
+                    } else if (isset($winterthurRoom[$key]) && trim($winterthurRoom[$key]) != '') {
+                        $groupedDates[$i][$j][] = "Winterthur";
 
-                            !isset($zurichRoom[$key]) || trim($zurichRoom[$key])=== "" ?
-                                $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $zurichRoom[$key];
+                        !isset($winterthurRoom[$key]) || trim($winterthurRoom[$key])=== "" ?
+                            $groupedDates[$i][$j][] = "Room not assigned" : $groupedDates[$i][$j][] = $winterthurRoom[$key];
 
-                            $groupedDates[$i][$j][] = "Zurich";
-                        };
+                        $groupedDates[$i][$j][] = "Winterthur";
                     }
 
                     $groupedDates[$i][$j][] = $customer[$key];
@@ -261,10 +261,7 @@ class Scheduleit extends Helpers
             }
             unset($value);
 
-            $uniqueMonths = array_unique($eventMonths, SORT_REGULAR);
-
             $eventDetails = array(
-                "amountOfEvents" => count($eventData),
                 "id" => $eventId,
                 "title" => $eventTitle,
                 "dateStart" => $eventDateStart,
@@ -272,7 +269,6 @@ class Scheduleit extends Helpers
                 "startEndTime" => $eventStartEndTime,
                 "date" => $eventDates,
                 "month" => $eventMonths,
-                "uniqueMonth" => $uniqueMonths,
                 "owners" => $eventOwners
             );
 

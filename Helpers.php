@@ -28,12 +28,11 @@ class Helpers
     function implode($resource)
     {
         foreach ($resource as $key => $value) {
-            if (count($value) > 1) {
+            if (count($value) > 0) {
                 $implode = implode(", ", $value);
                 $resource[$key] = $implode;
             } else {
-                //reduce array by one dimension
-                $resource[$key] = $value[0];
+                $resource[$key] = '';
             }
         }
 
@@ -43,21 +42,18 @@ class Helpers
     function searchInArray($explodeOwnerIds, $resourceList)
     {
         $result = array();
-        $key = 0;
 
         for ($i = 0; $i < count($explodeOwnerIds); $i++) {
-
+            $result[] = array();
             for ($j = 0; $j < count($explodeOwnerIds[$i]); $j++) {
 
                 $searchForResource = array_search($explodeOwnerIds[$i][$j], array_column($resourceList, "id"));
 
                 if ($searchForResource !== false) {
-                    $result[$i][$key] = trim($resourceList[$searchForResource]["name"]);
-                    $key++;
+                    $result[$i][] = trim($resourceList[$searchForResource]["name"]);
                 }
 
             }
-            $key = 0;
         }
 
         return $result;
@@ -78,6 +74,22 @@ class Helpers
         }
 
         return $dateAndLastHour;
+    }
+
+    function removeEventsFromPast($keepNrOfMonths, $eventDetails) {
+        $result = array();
+        foreach($eventDetails['dateEnd'] as $key => $end) {
+            $month = substr($end, 5, 2) + 0;
+            $now = new \DateTime('now');
+            $nowMonth = $now->format('m') + 0;
+            if ($nowMonth - $keepNrOfMonths + 1 <= $month) {
+                foreach ($eventDetails as $a => $infoArray) {
+                    $result[$a][] = $eventDetails[$a][$key];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
