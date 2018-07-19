@@ -27,6 +27,9 @@ class Scheduleit extends Helpers
         $this->username = $username;
         $this->password = $password;
         $this->resourceList = $this->getResourceList();
+        if ($this->resourceList === "429") {
+            return;
+        }
         $this->eventList = $this->eventList();
     }
 

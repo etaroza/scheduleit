@@ -175,21 +175,23 @@
                                                         <?php } ?>
                                                     </div>
                                                     <div class="col-9 col-sm-10 col-md-2 event-hours">
-                                                        <div>
+                                                        <h6>
                                                             <?php echo $hours ?>
-                                                        </div>
-                                                        <div>
-                                                            <?php echo $room ?>
-                                                        </div>
+                                                            <br>
+                                                            <small>
+                                                            <?php echo $room ?><span><?php echo ($room && $school ? ", " : "") ?><?php echo "{$school}" ?></small></span>
+                                                            </small>
+                                                        </h6>
                                                         <div class="d-md-none">
                                                             <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "class='first-active-event'" : "" ?>>
-                                                                <div>
-                                                                    <?php echo "{$language}" ?> 
-                                                                    <?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?>
-                                                                </div>
-                                                                <div>
-                                                                    <?php echo "{$mode}: {$students}" ?>
-                                                                </div>
+                                                                <h6>
+                                                                    <?php echo "{$language}" ?><br>
+                                                                    <small><?php echo "{$course} {$intensity} "?></small>
+                                                                </h6>
+                                                                <h6>
+                                                                    <?php echo "{$mode}" ?><br>
+                                                                    <small><?php echo "{$students}"?></small>
+                                                                </h6>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -199,7 +201,7 @@
                                                             <div>
                                                                 <h6>
                                                                     <?php echo "{$language}" ?> 
-                                                                    <small><?php echo "{$course} {$intensity}. "?> <?php echo "{$school}" ?></small>
+                                                                    <small><?php echo "{$course} {$intensity}"?> <?php //echo "{$school}" ?></small>
                                                                 </h6>
                                                             </div>
                                                             <div>
