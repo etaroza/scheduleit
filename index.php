@@ -13,12 +13,14 @@
         $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
         $reports = new Reports(USER_ID, USERNAME, PASSWORD);
 
+        $uniqueMonth = ['January', 'January','January','January','January','January','January','January','January','January',];
+
         if ($data->getResourceList() === "429") {
 
         } else {
             $singleTeacherData = $data->getSingleTeacherData();
 
-            $uniqueMonth = array_unique($data->removeEventsFromPast(3, $data->eventList())['month'], SORT_REGULAR);
+            $uniqueMonth = array_unique($data->prepEvents(1)['month'], SORT_REGULAR);
 
             $events = $data->prepareTeacherEventsData();
 
@@ -190,7 +192,7 @@
                                                             </div>
                                                         <?php } ?>
                                                     </div>
-                                                    <div class="col-9 col-sm-10 col-md-2 event-hours">
+                                                    <div class="col-9 col-sm-10 col-md-2 event-hours <?php echo ((!$firstActiveEventSet && !$isPast)) ? "first-active-event" : "" ?>">
                                                         <h6>
                                                             <?php echo $hours ?>
                                                             <br>
@@ -199,7 +201,7 @@
                                                             </small>
                                                         </h6>
                                                         <div class="d-md-none">
-                                                            <div <?php echo ((!$firstActiveEventSet && !$isPast)) ? "class='first-active-event'" : "" ?>>
+                                                            <div>
                                                                 <h6>
                                                                     <?php echo "{$language}" ?><br>
                                                                     <small><?php echo "{$course} {$intensity} "?></small>
@@ -212,7 +214,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="d-none d-md-block col-md-8">
-                                                        <div class="event-details <?php echo ((!$firstActiveEventSet && !$isPast)) ? "first-active-event" : "" ?>">
+                                                        <div class="event-details">
                                                             <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
                                                             <div>
                                                                 <h6>
@@ -250,7 +252,7 @@
                         <?php } ?>
                         <?php foreach ($uniqueMonth as $value) { ?>
                             <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
-                                <a class="nav-link" href="#<?php echo $value?>"><?php echo $value?></a>
+                                <a class="nav-link" href="#<?php echo $value?>"><?php echo substr($value, 0, 3).'.'?></a>
                             </li>
                         <?php } ?>
                     </ul>

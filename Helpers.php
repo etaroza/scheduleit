@@ -92,6 +92,38 @@ class Helpers
         return $result;
     }
 
+    function removeEventsFromFuture($keepNrOfMonths, $eventDetails) {
+        $result = array();
+        foreach($eventDetails['dateEnd'] as $key => $end) {
+            $month = substr($end, 5, 2) + 0;
+            $now = new \DateTime('now');
+            $nowMonth = $now->format('m') + 0;
+            if ($month >= $nowMonth + $keepNrOfMonths - 1) {
+                foreach ($eventDetails as $a => $infoArray) {
+                    $result[$a][] = $eventDetails[$a][$key];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    function removeEventsFromPastAndFuture($eventDetails) {
+        $result = array();
+        foreach($eventDetails['dateEnd'] as $key => $end) {
+            $month = substr($end, 5, 2) + 0;
+            $now = new \DateTime('now');
+            $nowMonth = $now->format('m') + 0;
+            if ($month == $nowMonth || $nowMonth - 1 == $month || $month == $nowMonth + 1) {
+                foreach ($eventDetails as $a => $infoArray) {
+                    $result[$a][] = $eventDetails[$a][$key];
+                }
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Shorten name from Name Surename to Name S.
      */

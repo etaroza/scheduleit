@@ -46,7 +46,7 @@ class Scheduleit extends Helpers
 
         $ownersOfEveryEventWithEventIndexMaintained = [];
 
-        $eventDetails = $this->removeEventsFromPast(3, $this->eventList);
+        $eventDetails = $this->prepEvents(1);
 
         foreach ($eventDetails["owners"] as $value) {
             array_push($ownersOfEveryEventWithEventIndexMaintained, explode(',', $value));
@@ -76,6 +76,12 @@ class Scheduleit extends Helpers
             $intensity, $mode, $zurichRoom, $winterthurRoom, $externalLocation, $customer);
 
         return $groupMessagesByDate;
+    }
+
+    function prepEvents($nr) {
+        $e = $this->removeEventsFromPastAndFuture($this->eventList);
+//        $e = $this->removeEventsFromFuture(1, $e);
+        return $e;
     }
 
     function reorganizeEventMonths($groupMessagesByDate)
