@@ -13,15 +13,20 @@
         $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
         $reports = new Reports(USER_ID, USERNAME, PASSWORD);
 
-        $singleTeacherData = $data->getSingleTeacherData();
+        if ($data->getResourceList() === "429") {
 
-        $uniqueMonth = array_unique($data->removeEventsFromPast(3, $data->eventList())['month'], SORT_REGULAR);
+        } else {
+            $singleTeacherData = $data->getSingleTeacherData();
 
-        $events = $data->prepareTeacherEventsData();
+            $uniqueMonth = array_unique($data->removeEventsFromPast(3, $data->eventList())['month'], SORT_REGULAR);
 
-        $dateAndLastHour = $helpers->eventEndingDateAndLastHour($events);
+            $events = $data->prepareTeacherEventsData();
 
-        $reorganizedEventMonths = $data->reorganizeEventMonths($events);
+            $dateAndLastHour = $helpers->eventEndingDateAndLastHour($events);
+
+            $reorganizedEventMonths = $data->reorganizeEventMonths($events);
+        }
+
 
     }
 ?>
@@ -49,35 +54,46 @@
     <header>
         <nav class="navbar fixed-top navbar-expand-lg navbar-light navbar-bg">
             <div class="container">
-                <a class="navbar-brand" href="https://www.vox-sprachschule.ch">
-                    <img src="img/logo.png" alt="VOX-Sprachschule logo">
+                <a class="navbar-brand d-md-none d-lg-none" href="https://www.vox-sprachschule.ch">
+                    <img src="img/vox_bubble.png" alt="VOX-Sprachschule">
+                </a>
+                <a class="navbar-brand d-none d-md-block d-lg-block" href="https://www.vox-sprachschule.ch">
+                    <img src="img/vox-logo_250_71.jpg" alt="VOX-Sprachschule">
                 </a>
 
+                <?php if (isset($_GET["email"])) { ?>
+                    <div class="col">
+                        <div class="row">
+                            <div class="col">
+                                <div class="">
+                                    <select class="city-select" name="city-selector" id="city-select">
+                                        <option value="all" selected="">All</option>
+                                        <option value="zurich">Zurich</option>
+                                        <option value="winterthur">Winterthur</option>
+                                        <option value="external">External</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <span class="col-auto">
+                                <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change<span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
+                            </span>
+                        </div>
+                    </div>
+
+<!--
+                    <div class="navbar-nav mr-3">&nbsp;
+                        <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary d-none">Request changes</a>
+                    </div>
+                    -->
+                <?php } ?>
+<!--
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-dropdown-form" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbar-dropdown-form">
-                    <form action="" method="get" class="form-inline mr-auto mr-3 my-3 my-lg-0" id="emailForm">
-                        <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
-                               aria-describedby="teacherEmail" value="<?php echo $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) ?>" required>
-                        <button class="btn btn-<?php echo isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
-                    </form>
-
-                    <?php if (isset($_GET["email"])) { ?>
-                        <div class="navbar-nav mr-3">
-                            <label for="city-select">Filter by school: </label>
-                            <select class="city-select my-1 mr-sm-2" name="city-selector" id="city-select">
-                                <option value="all" selected="">All</option>
-                                <option value="zurich">Zurich</option>
-                                <option value="winterthur">Winterthur</option>
-                                <option value="external">External (not in school)</option>
-                            </select>
-                            &nbsp;
-                            <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Request changes</a>
-                        </div>
-                    <?php } ?>
                 </div>
+                -->
             </div>
         </nav>
     </header>
@@ -244,6 +260,24 @@
     </footer>
 
     <?php }
+    } else {
+    ?>
+        <form action="" method="get" class="" id="emailForm">
+            <div class="form-row">
+                <label>Enter your email to retrieve the schedule:</label>
+            </div>
+
+            <div class="form-row">
+                <div class="col-auto">
+                    <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
+                   aria-describedby="teacherEmail" value="<?php echo (isset($_GET["email"]) ? $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) : '') ?>" required>
+                </div>
+                <div class="col-auto">
+                <button class="btn btn-<?php echo isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+        <?php
     } ?>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -258,10 +292,12 @@
         <script>
             jQuery(document).ready(function() {
                 setTimeout(function () {
-                    jQuery("html, body").animate({
-                        scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
-                    }, 800, "swing");
-                }, 800);
+                    if (jQuery(".first-active-event:visible").first().length == 1){
+                        jQuery("html, body").animate({
+                            scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
+                        }, 300, "swing");
+                    }
+                }, 300);
             });
         </script>
     <?php } ?>

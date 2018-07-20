@@ -4,6 +4,7 @@ jQuery(document).ready(function () {
     var $root = jQuery("html, body");
 
     // initiate jquery select2 plugin
+
     jQuery('#city-select').select2({
         minimumResultsForSearch: Infinity,
         placeholder: "Select a city",
