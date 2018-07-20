@@ -264,8 +264,9 @@
     <?php }
     } else {
     ?>
+        <h1>Your schedule</h1>
         <form action="" method="get" class="" id="emailForm">
-            <div class="form-row">
+            <div class="form-group">
                 <label>Enter your email to retrieve the schedule:</label>
             </div>
 

@@ -114,7 +114,7 @@ class Scheduleit extends Helpers
 
                     $groupedDates[$i][$j][] = $date;
                     $groupedDates[$i][$j][] = $events["startEndTime"][$key];
-                    $groupedDates[$i][$j][] = $language[$key];
+                    $groupedDates[$i][$j][] = substr($language[$key], 0, -4);
                     $groupedDates[$i][$j][] = $course[$key];
                     $groupedDates[$i][$j][] = $intensity[$key];
                     $groupedDates[$i][$j][] = $mode[$key];
