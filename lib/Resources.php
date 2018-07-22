@@ -45,7 +45,7 @@ class Resources {
 
     public function getResourcesByGroup($groupId = null) {
         if (!$this->resources) {
-            return array($groupId => array());
+            return array();
         }
 
         if ($groupId) {

@@ -12,6 +12,8 @@ $date = $controller->getRepresentativeDate();
     <meta name="description" content="Schedule of courses and lessons.">
     <meta name="author" content="">
     <meta name="robots" CONTENT="NOINDEX,NOFOLLOW">
+    <!-- Autorefresh -->
+    <meta http-equiv="refresh" content="<?php echo 15*60 ?>">
 
     <title>VOX-Sprachschule Schedule</title>
 
@@ -67,14 +69,13 @@ $date = $controller->getRepresentativeDate();
 <!-- Begin page content -->
 <?php if ($controller->getSchoolResourceGroupId()) : ?>
     <main role="main" class="container-fluid pl-0 pr-0">
+        <?php if(empty($rooms)): ?>
+            <div id="noTeacher" class="alert alert-warning" role="alert">
+                Schedule is currently unavailable, try again later.
+            </div>
+        <?php endif; ?>
+
         <table class="table table-bordered mb-0">
-            <!--<thead>
-                <tr>
-                    <?php foreach ($rooms as $room): ?>
-                        <th data-room="<?php echo $room['id'] ?>" scope="col" class="text-center"><?php echo $room['name'] ?></th>
-                    <?php endforeach; ?>
-                </tr>
-            </thead>-->
             <tbody>
                 <?php
                     $eventsByRoom = $controller->getEventsByRoom();
@@ -134,8 +135,24 @@ $date = $controller->getRepresentativeDate();
                 }
             });
             if ($('.sticky-top').length == 1) {
-                var $currentRowAccordingToTime = $("tbody tr.h-" + ((new Date()).getHours()));
-                if ($currentRowAccordingToTime.first().length == 1){
+                var currentH = (new Date()).getHours();
+                // TODO: remove hardcoded beginning and end of the day
+                currentH = Math.max(6, currentH);
+                currentH = Math.min(21, currentH);
+                var $currentRowAccordingToTime = $("tbody tr.h-" + currentH);
+                if($currentRowAccordingToTime.is('.d-none')) {
+                    var $newVisible = $currentRowAccordingToTime.nextAll(":not(.d-none)").first();
+                    if ($newVisible.length == 0) {
+                        $newVisible = $currentRowAccordingToTime.prevAll(":not(.d-none)").first();
+                    }
+                    if ($newVisible.length == 1) {
+                        $currentRowAccordingToTime = $newVisible;
+                    }
+                }
+
+                console.log($currentRowAccordingToTime);
+
+                if ($currentRowAccordingToTime.length == 1){
                     $("html, body").animate({
                         scrollTop: $currentRowAccordingToTime.offset().top - $('.sticky-top').height()
                     }, 300, "swing");
