@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                             <span class="col-auto">
-                                <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change<span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
+                                <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change <span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
                             </span>
                         </div>
                     </div>
