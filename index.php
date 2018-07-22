@@ -1,4 +1,5 @@
 <?php
+    include_once "lib/Resources.php";
     include_once "config.php";
     include_once "Helpers.php";
     include_once "Scheduleit.php";
@@ -264,22 +265,49 @@
     <?php }
     } else {
     ?>
-        <h1>Your schedule</h1>
-        <form action="" method="get" class="" id="emailForm">
-            <div class="form-group">
-                <label>Enter your email to retrieve the schedule:</label>
+    <main role="main" class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Your schedule</h1>
+                <form action="" method="get" class="" id="emailForm">
+                    <div class="form-group">
+                        <label>Enter your email to retrieve the schedule:</label>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="col-auto">
+                            <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
+                           aria-describedby="teacherEmail" value="<?php echo (isset($_GET["email"]) ? $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) : '') ?>" required>
+                        </div>
+                        <div class="col-auto">
+                        <button class="btn btn-<?php echo isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+            <div class="col">
+                <h1>School schedule</h1>
+                <form action="rooms.php" method="get">
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="school" id="school1" value="<?php echo \Vox\Scheduleit\Resources::GROUP_ROOMS_ZURICH ?>">
+                            <label class="form-check-label" for="school1">
+                                Zurich
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="school" id="school2" value="<?php echo \Vox\Scheduleit\Resources::GROUP_ROOMS_WINTERTHUR ?>">
+                            <label class="form-check-label" for="school2">
+                                Winterthur
+                            </label>
+                        </div>
+                    </div>
 
-            <div class="form-row">
-                <div class="col-auto">
-                    <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
-                   aria-describedby="teacherEmail" value="<?php echo (isset($_GET["email"]) ? $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) : '') ?>" required>
-                </div>
-                <div class="col-auto">
-                <button class="btn btn-<?php echo isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
-                </div>
+                    <button class="btn btn-<?php echo isset($_GET['school']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
+                </form>
             </div>
-        </form>
+        </div>
+    </main>
         <?php
     } ?>
 

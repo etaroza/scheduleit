@@ -113,6 +113,10 @@ class Events {
         return self::resourceNamePrinter($event, Resources::GROUP_CUSTOMERS);
     }
 
+    public static function printRoom($event, $schoolGroupId) {
+        return self::resourceNamePrinter($event, $schoolGroupId);
+    }
+
     private static function resourceNamePrinter($event, $groupId, $onlyFirst = false, $separator = ', ') {
         if (isset($event[$groupId])) {
             $result = array();

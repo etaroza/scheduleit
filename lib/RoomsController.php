@@ -62,6 +62,12 @@ class RoomsController extends Controller {
         }
     }
 
+    public function printRoom($event) {
+        $school = $this->getSchoolResourceGroupId();
+        return Events::printRoom($event, $school);
+    }
+
+
     public function getRooms() {
         $school = $this->getSchoolResourceGroupId();
         return $this->resources->getResourcesByGroup($school);

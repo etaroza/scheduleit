@@ -55,7 +55,7 @@ $date = $controller->getRepresentativeDate();
             <h4 class="d-none d-lg-block d-md-block"><small>Your personal schedule is on: </small><a href="https://www.vox-sprachschule.ch/schedule" target="_blank">vox-sprachschule.ch/schedule</a></h4>
         </div>
     </nav>
-    <table class="table table-bordered mb-0">
+    <table class="table table-bordered mb-0 d-none d-md-table d-lg-table">
         <thead>
             <tr class="table-light">
                 <?php foreach ($rooms as $room): ?>
@@ -89,6 +89,10 @@ $date = $controller->getRepresentativeDate();
                                         <?php if(substr($event['date_start'], -5, 3) == $h): ?>
                                             <h6>
                                                 <?php echo \Vox\Scheduleit\Events::printTimes($event) ?>
+                                                <small class="d-md-none d-lg-none">
+                                                    <br>
+                                                    <?php echo $controller->printRoom($event)?>
+                                                </small>
                                                 <br>
                                                 <small>
                                                     <?php $mode = \Vox\Scheduleit\Events::printLearningMode($event) ?>
