@@ -2,6 +2,7 @@
 <?php
 include_once "lib/RoomsController.php";
 $controller = new \Vox\Scheduleit\RoomsController();
+$rooms = $controller->getRooms();
 $date = $controller->getRepresentativeDate();
 ?>
 <html lang="en">
@@ -19,10 +20,14 @@ $date = $controller->getRepresentativeDate();
 
     <!-- Custom styles -->
     <link href="css/styles.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
 <body>
 
-<header class=" <?php echo ($controller->getSchoolResourceGroupId() ? 'mb-0' : '')?>">
+<header class="sticky-top <?php echo ($controller->getSchoolResourceGroupId() ? 'mb-0' : '')?>" data-offset="220">
     <nav class="navbar navbar-expand-lg navbar-light navbar-bg">
         <div class="container<?php echo ($controller->getSchoolResourceGroupId() ? '-fluid' : '')?>">
             <span class="navbar-brand">
@@ -38,7 +43,7 @@ $date = $controller->getRepresentativeDate();
 
             <span class="<?php echo ($controller->getSchoolResourceGroupId() ? '' : 'd-none')?>">
                 <div class="text-center d-none d-lg-block d-md-block">
-                    Report mistakes to:<br>
+                    Please report mistakes to:<br>
                     <a class="blink" href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a>
                     <br>
                     +41 44 22 111 33
@@ -48,26 +53,34 @@ $date = $controller->getRepresentativeDate();
             <h4 class="d-none d-lg-block d-md-block"><small>Your personal schedule is on: </small><a href="https://www.vox-sprachschule.ch/schedule" target="_blank">vox-sprachschule.ch/schedule</a></h4>
         </div>
     </nav>
+    <table class="table table-bordered mb-0">
+        <thead>
+            <tr class="table-light">
+                <?php foreach ($rooms as $room): ?>
+                    <th style='width: <?php echo 100/count($rooms) ?>%' data-room="<?php echo $room['id'] ?>" scope="col" class="text-center"><?php echo $room['name'] ?></th>
+                <?php endforeach; ?>
+            </tr>
+        </thead>
+    </table>
 </header>
 
 <!-- Begin page content -->
 <?php if ($controller->getSchoolResourceGroupId()) : ?>
     <main role="main" class="container-fluid pl-0 pr-0">
         <table class="table table-bordered mb-0">
-            <thead>
+            <!--<thead>
                 <tr>
-                    <?php foreach ($controller->getRooms() as $room): ?>
+                    <?php foreach ($rooms as $room): ?>
                         <th data-room="<?php echo $room['id'] ?>" scope="col" class="text-center"><?php echo $room['name'] ?></th>
                     <?php endforeach; ?>
                 </tr>
-            </thead>
+            </thead>-->
             <tbody>
                 <?php
-                    $rooms = $controller->getRooms();
                     $eventsByRoom = $controller->getEventsByRoom();
                 ?>
                 <?php foreach (['06:', '07:', '08:', '09:', '10:', '11:', '12:', '13:', '14:', '15:', '16:', '17:', '18:', '19:', '20:', '21:'] as $h): ?>
-                    <tr data-hour="<?php echo substr($h, 0, -1) ?>">
+                    <tr class="h-<?php echo substr($h, 0, -1)+0 ?>">
                         <?php foreach ($rooms as $rid => $room): ?>
                             <?php if (isset($eventsByRoom[$rid])):?>
                                 <td style='width: <?php echo 100/count($rooms) ?>%' " data-room="<?php echo $room['id'] ?>" scope="col" class="text-left">
@@ -87,7 +100,7 @@ $date = $controller->getRepresentativeDate();
                                                 <small>
                                                     <?php $course = \Vox\Scheduleit\Events::printCourse($event) ?>
                                                     <?php $teacher = \Vox\Scheduleit\Events::printTeacher($event) ?>
-                                                    <?php echo $course ?><?php echo (!empty($course) && !empty($teacher) ? ", {$teacher}" : '')?>
+                                                    <?php echo $course ?><?php echo (!empty($course) && !empty($teacher) ? ", <em>{$teacher}</em>" : '')?>
 
                                                     <?php $students = \Vox\Scheduleit\Events::printStudents($event)?>
                                                     <?php if(!empty($students)): ?>
@@ -110,6 +123,26 @@ $date = $controller->getRepresentativeDate();
             </tbody>
         </table>
     </main>
+
+    <!--Scroll to earliest active event after submit-->
+    <script>
+        jQuery(function($) {
+            $('tbody tr').each(function() {
+                var text = $.trim($(this).text());
+                if (text.length == 0) {
+                    $(this).addClass('d-none');
+                }
+            });
+            if ($('.sticky-top').length == 1) {
+                var $currentRowAccordingToTime = $("tbody tr.h-" + ((new Date()).getHours()));
+                if ($currentRowAccordingToTime.first().length == 1){
+                    $("html, body").animate({
+                        scrollTop: $currentRowAccordingToTime.offset().top - $('.sticky-top').height()
+                    }, 300, "swing");
+                }
+            }
+        });
+    </script>
 <?php else: ?>
     <main role="main" class="container">
         <h1>School schedule</h1>
@@ -148,27 +181,5 @@ $date = $controller->getRepresentativeDate();
         </div>
     </footer>
 <?php endif; */?>
-
-<!--Scroll to earliest active event after submit-->
-<?php /*if (isset($_GET["email"]) && $data->getResourceList() != "429" &&
-    $data->getResourceList() != null) { ?>
-    <script>
-        jQuery(document).ready(function() {
-            setTimeout(function () {
-                if (jQuery(".first-active-event:visible").first().length == 1){
-                    jQuery("html, body").animate({
-                        scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
-                    }, 300, "swing");
-                }
-            }, 300);
-        });
-    </script>
-<?php } */?>
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 </body>
 </html>
