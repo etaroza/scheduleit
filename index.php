@@ -1,39 +1,19 @@
-<?php
-    include_once "lib/Resources.php";
-    include_once "config.php";
-    include_once "Helpers.php";
-    include_once "Scheduleit.php";
-    include_once "Reports.php";
-
-    $helpers = new Helpers();
-
-    if (isset($_GET["email"])) {
-        $currentDate = new DateTime();
-        $firstActiveEventSet = false;
-
-        $data = new Scheduleit(USER_ID, USERNAME, PASSWORD);
-        $reports = new Reports(USER_ID, USERNAME, PASSWORD);
-
-        $uniqueMonth = ['January', 'January','January','January','January','January','January','January','January','January',];
-
-        if ($data->getResourceList() === "429") {
-
-        } else {
-            $singleTeacherData = $data->getSingleTeacherData();
-
-            $uniqueMonth = array_unique($data->prepEvents(1)['month'], SORT_REGULAR);
-
-            $events = $data->prepareTeacherEventsData();
-
-            $dateAndLastHour = $helpers->eventEndingDateAndLastHour($events);
-
-            $reorganizedEventMonths = $data->reorganizeEventMonths($events);
-        }
-
-
-    }
-?>
 <!DOCTYPE html>
+<?php
+include_once "lib/PersonController.php";
+$controller = new \Vox\Scheduleit\PersonController();
+$events = $controller->getEventsGroupedByDate();
+
+$uniqueMonths = array();
+foreach (array_keys($events) as $date){
+    $d = new \DateTime($date);
+    $uniqueMonths[] = $d->format('F');
+}
+unset($date);
+$uniqueMonths = array_unique($uniqueMonths);
+
+?>
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -51,7 +31,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" rel="stylesheet" />
     <!-- Custom styles -->
     <link href="css/styles.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
   </head>
+
   <body class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="220">
 
     <header>
@@ -64,7 +50,7 @@
                     <img src="img/vox-logo_250_71.jpg" alt="VOX-Sprachschule">
                 </a>
 
-                <?php if (isset($_GET["email"])) { ?>
+                <?php if ($controller->getPersonId()) : ?>
                     <div class="col">
                         <div class="row">
                             <div class="col">
@@ -78,166 +64,189 @@
                                 </div>
                             </div>
                             <span class="col-auto">
-                                <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change <span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
+                                <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change<span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
                             </span>
                         </div>
                     </div>
-
-<!--
-                    <div class="navbar-nav mr-3">&nbsp;
-                        <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary d-none">Request changes</a>
-                    </div>
-                    -->
-                <?php } ?>
-<!--
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-dropdown-form" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbar-dropdown-form">
-                </div>
-                -->
+                <?php endif; ?>
             </div>
         </nav>
     </header>
 
+
+<?php if ($controller->getPersonId()): ?>
     <!-- Begin page content -->
     <main role="main" class="container">
-
-        <?php if (isset($_GET["email"])) { ?>
-
-            <?php if ($data->getResourceList() === "429") { ?>
-                <div class="row">
-                    <div class="col-12 col-sm-10 col-lg-7">
-                        <div id="noTeacher" class="alert alert-danger" role="alert">
-                            Schedule is currently unavailable, try again later.
-                        </div>
+        <?php if (!$controller->didEventsLoadSuccessfully()) { ?>
+            <div class="row">
+                <div class="col-12 col-sm-10 col-lg-7">
+                    <div id="noTeacher" class="alert alert-warning" role="alert">
+                        Schedule is currently unavailable, try again later.
                     </div>
                 </div>
-            <?php } elseif ($singleTeacherData === null) { ?>
-                <div class="row">
-                    <div class="col-12 col-sm-10 col-lg-7">
-                        <div id="noTeacher" class="alert alert-danger" role="alert">
-                            Can not find a schedule by that email. We probably have your wrong email, 
-                            please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a> about this.
-                        </div>
-                    </div>
-                </div>
-            <?php } elseif (count($events) === 0) { ?>
-                <div class="row">
-                    <div class="col-12 col-sm-10 col-lg-7">
-                        <div id="noEvents" class="alert alert-warning" role="alert">
-                            No scheduled events for this email. If you think that's wrong, 
-                            please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a>.
-                        </div>
-                    </div>
-                </div>
-            <?php } else { ?>
-
-            <div>
-                <h4>In total <?php echo $reports->countHoursTillToday()["hours"]; ?> hours, had <?php echo $reports->countHoursTillToday()["amountOfEvents"]; ?> lessons.</h4>
-                <p>
-                    Till <?php echo $reports->countHoursTillLastDayOfPrevMonth()["date"]; ?>: <?php echo $reports->countHoursTillLastDayOfPrevMonth()["hours"]; ?> hours, had <?php echo $reports->countHoursTillLastDayOfPrevMonth()["amountOfEvents"];?> lessons.
-                </p>
             </div>
+        <?php } elseif (!($controller->isTeacher() || $controller->isCustomer())) { ?>
+            <div class="row">
+                <div class="col-12 col-sm-10 col-lg-7">
+                    <div id="noTeacher" class="alert alert-danger" role="alert">
+                        Can't find a schedule for <?php echo $controller->getPersonEmail()?>. We probably have your wrong email,
+                        please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a> about this.
+                    </div>
+                </div>
+            </div>
+        <?php } elseif (count($events) === 0) { ?>
+            <div class="row">
+                <div class="col-12 col-sm-10 col-lg-7">
+                    <div id="noEvents" class="alert alert-warning" role="alert">
+                        No scheduled events for <?php echo $controller->getPersonEmail()?>. If you think that's wrong,
+                        please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a>.
+                    </div>
+                </div>
+            </div>
+        <?php } else { ?>
 
-            <hr>
+        <div class="row row-no-gutters">
+            <div class="col-12">
+                <div id="events">
+                    <?php foreach ($uniqueMonths as $m) { ?>
+                        <div id="<?php echo strtolower($m)?>">
+                            <h2><?php echo $m?></h2>
+                            <?php foreach(array_keys($events) as $date): ?>
+                                <?php $d = new \DateTime($date); ?>
+                                <?php if ($m != $d->format('F')) { continue; }?>
 
-            <div class="row row-no-gutters">
-                <div class="col-12">
-                    <div id="events">
-                        <?php foreach ($uniqueMonth as $value) { ?>
-                            <div id="<?php echo $value?>">
-                                <h4><?php echo $value?></h4>
-                                <?php for ($i = 0; $i < count($events); $i++) {
-                                    /**
-                                     * [0] - date (2018-07-17)
-                                     * [1] - hours (17:30 - 19:00)
-                                     * [2] - language (German(DE))
-                                     * [3] - course (TALK B1-B2)
-                                     * [4] - intensity (Standard (90x2x12))
-                                     * [5] - mode (Small Group (max. 5))
-                                     * [6] - title (G1243)
-                                     * [7] - String "Zurich" or "Winterthur"
-                                     * [8] - room (Room 2)
-                                     * [9] - school id
-                                     * [10] - customers (Nicolas V., Vlaemynck J.)
-                                     */
-                                    if ($reorganizedEventMonths[$i] == $value) { ?>
-                                        <div class="separator">
-                                             <?php for ($j = 0; $j < count($events[$i]); $j++) { ?>
-                                                 <?php 
-                                                    $date = $events[$i][$j][0];
-                                                    $hours = $events[$i][$j][1];
-                                                    $language = $events[$i][$j][2];
-                                                    $course = $events[$i][$j][3];
-                                                    $intensity = $events[$i][$j][4];
-                                                    $mode = $events[$i][$j][5];
-                                                    $title = $events[$i][$j][6];
-                                                    $school = $events[$i][$j][7];
-                                                    $room = $events[$i][$j][8];
-                                                    $schoolid = $events[$i][$j][9];
-                                                    $students = $events[$i][$j][10];
+                                <div class="separator">
+                                    <?php $j = 0; foreach($events[$date] as $event): ?>
+                                             <?php
+                                                $startDateTime = new \DateTime($event['date_start']);
+                                                $endDateTime = new \DateTime($event['date_end']);
+                                                $hours = \Vox\Scheduleit\Events::printTimes($event);
+                                                $language = \Vox\Scheduleit\Events::printLanguage($event);
+                                                $course = \Vox\Scheduleit\Events::printCourse($event);
+                                                $intensity = \Vox\Scheduleit\Events::printIntensity($event);
+                                                $mode = \Vox\Scheduleit\Events::printLearningMode($event);
+                                                $title = $event['title'];
+                                                $schoolRoom = \Vox\Scheduleit\Events::printRoomInSchool($event);
+                                                $schoolid = strtolower($controller->getSchoolId($event));
+                                                $students = \Vox\Scheduleit\Events::printStudents($event);
 
-                                                    $isPast = $currentDate > new DateTime($dateAndLastHour[$i][$j][0]);
-                                                 ?>
-                                                <div class="row <?php echo $schoolid ?> <?php echo $isPast ? 'text-muted':'' ?>">
-                                                    <div class="col-3 col-sm-2 col-md-2 event-date">
-                                                        <?php if (!($j > 0)) { ?>
-                                                            <div class="event-day">
-                                                                <?php echo date("D", strtotime($date)) ?>
-                                                            </div>
-                                                            <div class="event-numerical-day-month">
-                                                                <?php echo date("d", strtotime($date))
-                                                                    . " " . date("M", strtotime($date)) ?>
-                                                            </div>
-                                                        <?php } ?>
-                                                    </div>
-                                                    <div class="col-9 col-sm-10 col-md-2 event-hours <?php echo ((!$firstActiveEventSet && !$isPast)) ? "first-active-event" : "" ?>">
-                                                        <h6>
-                                                            <?php echo $hours ?>
-                                                            <br>
-                                                            <small>
-                                                            <?php echo $room ?><span><?php echo ($room && $school ? ", " : "") ?><?php echo "{$school}" ?></small></span>
-                                                            </small>
-                                                        </h6>
-                                                        <div class="d-md-none">
-                                                            <div>
-                                                                <h6>
-                                                                    <?php echo "{$language}" ?><br>
-                                                                    <small><?php echo "{$course} {$intensity} "?></small>
-                                                                </h6>
-                                                                <h6>
-                                                                    <?php echo "{$mode}" ?><br>
-                                                                    <small><?php echo "{$students}"?></small>
-                                                                </h6>
-                                                            </div>
+                                                $isPast = new \DateTime() > $startDateTime;
+                                             ?>
+                                            <div class="row <?php echo $schoolid ?> <?php echo $isPast ? 'text-muted':'' ?>">
+                                                <div class="col-3 col-sm-2 col-md-2 event-date">
+                                                    <div class="event-date-inner <?php echo ($j++ > 0 ? 'd-none' : '') ?>">
+                                                        <div class="event-day">
+                                                            <?php echo $startDateTime->format('D') ?>
                                                         </div>
-                                                    </div>
-                                                    <div class="d-none d-md-block col-md-8">
-                                                        <div class="event-details">
-                                                            <?php $firstActiveEventSet = (!$firstActiveEventSet && !$isPast); ?>
-                                                            <div>
-                                                                <h6>
-                                                                    <?php echo "{$language}" ?> 
-                                                                    <small><?php echo "{$course} {$intensity}"?> <?php //echo "{$school}" ?></small>
-                                                                </h6>
-                                                            </div>
-                                                            <div>
-                                                                <?php echo "{$mode}: {$students}" ?>
-                                                            </div>
+                                                        <div class="event-numerical-day-month">
+                                                            <?php echo $startDateTime->format('d')
+                                                                . " " . $startDateTime->format('M') ?>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            <?php } ?>
-                                        </div>
-                                    <?php }
-                                } ?>
-                            </div>
-                        <?php } unset($value);?>
-                    </div>
+                                                <div class="col-9 col-sm-10 col-md-2 event-hours <?php echo (!$isPast ? "active-event" : "") ?>">
+                                                    <h6>
+                                                        <?php echo $hours ?>
+                                                        <br>
+                                                        <small>
+                                                        <?php echo $schoolRoom ?>
+                                                        </small>
+                                                    </h6>
+                                                    <div class="d-md-none">
+                                                        <div>
+                                                            <h6>
+                                                                <?php echo "{$language}" ?><br>
+                                                                <small><?php echo "{$course} {$intensity} "?></small>
+                                                            </h6>
+                                                            <h6>
+                                                                <?php echo "{$mode}" ?><br>
+                                                                <small><?php echo "{$students}"?></small>
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="d-none d-md-block col-md-8">
+                                                    <div class="event-details">
+                                                        <div>
+                                                            <h6>
+                                                                <?php echo "{$language}" ?>
+                                                                <small><?php echo "{$course} {$intensity}"?></small>
+                                                            </h6>
+                                                        </div>
+                                                        <div>
+                                                            <?php echo "{$mode}: {$students}" ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                </div>
+                            <?php endforeach; ?>
+
+                        </div>
+                    <?php }?>
                 </div>
             </div>
+        </div>
+
+        <script>
+            jQuery(function($) {
+                function scrollToEarliestEvent() {
+                    if ($(".active-event:visible").first().length == 1){
+                        jQuery("html, body").animate({
+                            scrollTop: jQuery(".active-event:visible").first().offset().top - 60
+                        }, 300, "swing");
+                    }
+                }
+
+                scrollToEarliestEvent();
+
+                $(".nav-link").click(function () {
+                    $("html, body").animate({
+                        scrollTop: $($.attr(this, 'href')).offset().top - 60
+                    }, 300, 'swing');
+
+                    return false;
+                });
+
+                $("#jump-to-today").click(function () {
+                    scrollToEarliestEvent();
+                    return false;
+                });
+
+                $('#city-select').select2({
+                    minimumResultsForSearch: Infinity,
+                    placeholder: "Select a city",
+                    theme: "bootstrap"
+                });
+
+                $("#city-select").change(function() {
+                    var $allRows = $('.row.winterthur,.row.zurich,.row.external');
+                    if ($("select[name=city-selector]").val() === "all") {
+                        $allRows.removeClass('d-none');
+                    } else{
+                        var schoolId = $("select[name=city-selector]").val();
+                        $allRows.addClass('d-none');
+                        $allRows.filter('.'+schoolId).removeClass('d-none');
+                    }
+                    $(".event-date-inner", $allRows).addClass('d-none');
+                    $(".separator").each(function(){
+                       if($("> .row", this).length == $("> .row.d-none", this).length) {
+                           // All rows hidden
+                           $(this).hide();
+                       } else {
+                           // Some rows shown
+                           $(this).show();
+                           // Check that the date is showing
+                           $("> .row", this).filter(":not(.d-none):first").find(".event-date-inner.d-none").removeClass("d-none");
+                       }
+
+                    });
+                    scrollToEarliestEvent();
+                });
+            });
+        </script>
+
     </main>
 
     <footer class="fixed-bottom">
@@ -245,14 +254,14 @@
             <div class="row">
                 <nav id="navbar-months" class="col-12 navbar navbar-light">
                     <ul class="nav nav-pills">
-                        <?php if (isset($_GET["email"])) { ?>
+                        <?php if ($controller->getPersonId()) { ?>
                             <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
                                 <a id="jump-to-today" href="javascript:void(0)" class="btn btn-outline-light">Today</a>
                             </li>
                         <?php } ?>
-                        <?php foreach ($uniqueMonth as $value) { ?>
+                        <?php foreach ($uniqueMonths as $m) { ?>
                             <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
-                                <a class="nav-link" href="#<?php echo $value?>"><?php echo substr($value, 0, 3).'.'?></a>
+                                <a class="nav-link" href="#<?php echo strtolower($m)?>"><?php echo substr($m, 0, 3).'.'?></a>
                             </li>
                         <?php } ?>
                     </ul>
@@ -261,25 +270,23 @@
         </div>
     </footer>
 
-    <?php }
-    } else {
-    ?>
+    <?php } ?>
+<?php else: ?>
     <main role="main" class="container">
         <div class="row">
             <div class="col">
                 <h1>Your schedule</h1>
                 <form action="" method="get" class="" id="emailForm">
                     <div class="form-group">
-                        <label>Enter your email to retrieve the schedule:</label>
+                        <label for="email">Enter your email to retrieve the schedule:</label>
                     </div>
     
                     <div class="form-row">
                         <div class="col-auto">
-                            <input id="teacherEmail" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" aria-label="teacherEmail"
-                           aria-describedby="teacherEmail" value="<?php echo (isset($_GET["email"]) ? $helpers->formInputValueChecker($helpers->formInputValidation($_GET["email"])) : '') ?>" required>
+                            <input id="email" class="form-control mr-sm-2" type="email" name="email" placeholder="name@example.com" value="" required>
                         </div>
                         <div class="col-auto">
-                        <button class="btn btn-<?php echo isset($_GET['email']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
+                        <button class="btn btn-primary" type="submit">Submit</button>
                         </div>
                     </div>
                 </form>
@@ -302,34 +309,12 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-<?php echo isset($_GET['school']) ? 'secondary' : 'primary' ?>" type="submit">Submit</button>
+                    <button class="btn btn-primary" type="submit">Submit</button>
                 </form>
             </div>
         </div>
     </main>
-        <?php
-    } ?>
+<?php endif; ?>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-    <script src="js/scripts.js"></script>
-
-    <!--Scroll to earliest active event after submit-->
-    <?php if (isset($_GET["email"]) && $data->getResourceList() != "429" &&
-        $data->getResourceList() != null) { ?>
-        <script>
-            jQuery(document).ready(function() {
-                setTimeout(function () {
-                    if (jQuery(".first-active-event:visible").first().length == 1){
-                        jQuery("html, body").animate({
-                            scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
-                        }, 300, "swing");
-                    }
-                }, 300);
-            });
-        </script>
-    <?php } ?>
   </body>
 </html>

@@ -233,14 +233,6 @@ footer {
     padding-right: 0;
 }
 
-.display-none {
-    display: none;
-}
-
-.text-muted {
-    color: #a9a9a9 !important;
-}
-
 .blink {
     animation: blinker 5s linear infinite;
 }
