@@ -297,7 +297,7 @@ $uniqueMonths = array_unique($uniqueMonths);
 <?php else: ?>
     <main role="main" class="container">
         <div class="row">
-            <div class="col">
+            <div class="col-sm-12 col-md-6 col-lg-6">
                 <h1>Your schedule</h1>
                 <form action="" method="get" class="" id="emailForm">
                     <div class="form-group">
@@ -314,7 +314,8 @@ $uniqueMonths = array_unique($uniqueMonths);
                     </div>
                 </form>
             </div>
-            <div class="col">
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <br class="d-md-none d-lg-none">
                 <h1>School schedule</h1>
                 <form action="rooms" method="get">
                     <div class="form-group">
