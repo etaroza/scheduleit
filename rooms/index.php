@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?php
-include_once "lib/RoomsController.php";
+include_once "../lib/RoomsController.php";
 $controller = new \Vox\Scheduleit\RoomsController();
 $rooms = $controller->getRooms();
 $date = $controller->getRepresentativeDate();
@@ -21,7 +21,7 @@ $date = $controller->getRepresentativeDate();
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
     <!-- Custom styles -->
-    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+    <link href="../css/styles.css" rel="stylesheet" type="text/css" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -33,14 +33,15 @@ $date = $controller->getRepresentativeDate();
     <nav class="navbar navbar-expand-lg navbar-light navbar-bg">
         <div class="container<?php echo ($controller->getSchoolResourceGroupId() ? '-fluid' : '')?>">
             <span class="navbar-brand">
-                <a class="d-md-none d-lg-none" href="https://www.vox-sprachschule.ch">
-                    <img src="img/vox_bubble.png" alt="VOX-Sprachschule">
+                <a class="d-md-none d-lg-none" href="/schedule">
+                    <img src="../img/vox_bubble.png" alt="VOX-Sprachschule">
                 </a>
-                <a class="d-none d-md-inline-block d-lg-inline-block" href="https://www.vox-sprachschule.ch">
-                    <img src="img/vox-logo_250_71.jpg" alt="VOX-Sprachschule">
+                <a class="d-none d-md-inline-block d-lg-inline-block" href="/schedule">
+                    <img src="../img/vox-logo_250_71.jpg" alt="VOX-Sprachschule">
                 </a>
-                <a href="" class="btn btn-primary"><?php echo date("l, d F", strtotime($date))?></a>
-                <small><?php echo $controller->getSchoolName() ?></small>
+                &nbsp;&nbsp;<a href="" class="btn btn-primary"><?php echo date("l, d F", strtotime($date))?></a>
+                <br><small><?php echo $controller->getSchoolName() ?></small>
+
             </span>
 
             <span class="<?php echo ($controller->getSchoolResourceGroupId() ? '' : 'd-none')?>">
@@ -52,7 +53,7 @@ $date = $controller->getRepresentativeDate();
                 </div>
             </span>
 
-            <h4 class="d-none d-lg-block d-md-block"><small>Your personal schedule is on: </small><a href="https://www.vox-sprachschule.ch/schedule" target="_blank">vox-sprachschule.ch/schedule</a></h4>
+            <h5 class="text-center d-none d-lg-block d-md-block"><small>Check your personal schedule on:</small> <span><a href="https://www.vox-sprachschule.ch/schedule" target="_blank">vox-sprachschule.ch/schedule</a></span></h5>
         </div>
     </nav>
     <table class="table table-bordered mb-0 d-none d-md-table d-lg-table">

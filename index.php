@@ -141,7 +141,7 @@ $uniqueMonths = array_unique($uniqueMonths);
                                                 $schoolRoom = \Vox\Scheduleit\Events::printRoomInSchool($event);
                                                 $schoolid = strtolower($controller->getSchoolId($event));
                                                 $students = \Vox\Scheduleit\Events::printStudents($event);
-
+                                                $teacher = \Vox\Scheduleit\Events::printTeacher($event);
                                                 $isPast = new \DateTime() > $startDateTime;
                                              ?>
                                             <div class="row <?php echo $schoolid ?> <?php echo $isPast ? 'text-muted':'' ?>">
@@ -167,27 +167,38 @@ $uniqueMonths = array_unique($uniqueMonths);
                                                     <div class="d-md-none">
                                                         <div>
                                                             <h6>
-                                                                <?php echo "{$language}" ?><br>
-                                                                <small><?php echo "{$course} {$intensity} "?></small>
+                                                                <?php echo "{$language}" ?>
+                                                                <small>
+                                                                    <?php echo $course ?>,
+                                                                    <?php if($controller->isCustomer() && !empty($teacher)):?>
+                                                                        <?php echo '<em>'. $teacher. '</em>';  ?>
+                                                                    <?php else: ?>
+                                                                        <?php echo '<em>'.$mode.'</em>';  ?>
+                                                                    <?php endif ?>
+                                                                </small>
                                                             </h6>
                                                             <h6>
-                                                                <?php echo "{$mode}" ?><br>
-                                                                <small><?php echo "{$students}"?></small>
+                                                                <small><span><?php echo $title ?>:</span> <?php echo "{$students}"?></small>
                                                             </h6>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="d-none d-md-block col-md-8">
                                                     <div class="event-details">
-                                                        <div>
-                                                            <h6>
-                                                                <?php echo "{$language}" ?>
-                                                                <small><?php echo "{$course} {$intensity}"?></small>
-                                                            </h6>
-                                                        </div>
-                                                        <div>
-                                                            <?php echo "{$mode}: {$students}" ?>
-                                                        </div>
+                                                        <h6>
+                                                            <?php echo "{$language}" ?>
+                                                            <small>
+                                                                <?php echo $course?>,
+                                                                <?php if($controller->isCustomer() && !empty($teacher)):?>
+                                                                    <?php echo '<em>'. $teacher. '</em>';  ?>
+                                                                <?php else: ?>
+                                                                    <?php echo '<em>'.$mode.'</em>';  ?>
+                                                                <?php endif ?>
+                                                            </small>
+                                                        </h6>
+                                                        <h6>
+                                                            <small><?php echo "{$title}: {$students}" ?></small>
+                                                        </h6>
                                                     </div>
                                                 </div>
                                             </div>
@@ -305,7 +316,7 @@ $uniqueMonths = array_unique($uniqueMonths);
             </div>
             <div class="col">
                 <h1>School schedule</h1>
-                <form action="rooms.php" method="get">
+                <form action="rooms" method="get">
                     <div class="form-group">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="school" id="school1" value="<?php echo \Vox\Scheduleit\Resources::GROUP_ROOMS_ZURICH ?>">
