@@ -55,17 +55,15 @@ jQuery(document).ready(function () {
     jQuery(".nav-link").click(function () {
         $root.animate({
             scrollTop: jQuery(jQuery.attr(this, 'href')).offset().top - 60
-        }, 800);
+        }, 300, 'swing');
 
         return false;
     });
 
     function scrollToEarliestEvent() {
-        setTimeout(function () {
-            $root.animate({
-                scrollTop: jQuery(".first-active-event:visible").first().offset().top - 60
-            }, 300, "swing");
-        }, 300);
+        $root.animate({
+            scrollTop: jQuery(".active-event:visible").first().offset().top - 60
+        }, 300, "swing");
     }
 
     function showHideSeparator() {
