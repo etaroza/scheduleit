@@ -27,7 +27,7 @@ class Resources {
 
     public function loadResources($groups) {
         $result = $this->api->getResources($groups);
-        if ($result) {
+        if ($result !== false) {
             $this->resources = $result;
             return $result;
         } else {

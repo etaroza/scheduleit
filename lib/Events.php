@@ -16,7 +16,7 @@ class Events {
 
     public function loadEvents($owners, $from, $to = null) {
         $result = $this->api->findEvents($owners, $from, $to);
-        if ($result) {
+        if ($result !== false) {
             $this->events = $result;
             return $result;
         } else {
@@ -89,6 +89,23 @@ class Events {
         }
     }
 
+    public function getEventsGroupedByDate() {
+        if (!$this->events) {
+            return array();
+        }
+
+        $result = array();
+        foreach ($this->events as $event) {
+            $date = substr($event['date_start'], 0, 10);
+            if (!isset($result[$date])) {
+                $result[$date] = array();
+            }
+            $result[$date][$event['id']] = $event;
+        }
+
+        return $result;
+    }
+
     public static function printTimes($event) {
         $from = new \DateTime($event['date_start']);
         $to = new \DateTime($event['date_end']);
@@ -107,6 +124,10 @@ class Events {
         return self::resourceNamePrinter($event, Resources::GROUP_COURSES);
     }
 
+    public static function printIntensity($event) {
+        return self::resourceNamePrinter($event, Resources::GROUP_INTENSITIES);
+    }
+
     public static function printTeacher($event) {
         return self::resourceNamePrinter($event, Resources::GROUP_TEACHERS);
     }
@@ -117,6 +138,34 @@ class Events {
 
     public static function printRoom($event, $schoolGroupId) {
         return self::resourceNamePrinter($event, $schoolGroupId);
+    }
+
+    public static function printSchool($event) {
+        if(isset($event[Resources::GROUP_EXTERNAL_LOCATIONS]) && count($event[Resources::GROUP_EXTERNAL_LOCATIONS]) > 0) {
+            return self::resourceNamePrinter($event, Resources::GROUP_EXTERNAL_LOCATIONS);
+        } else {
+            if(isset($event[Resources::GROUP_ROOMS_WINTERTHUR]) && count($event[Resources::GROUP_ROOMS_WINTERTHUR]) > 0) {
+                    return 'Winterthur';
+            } else if (isset($event[Resources::GROUP_ROOMS_ZURICH]) && count($event[Resources::GROUP_ROOMS_ZURICH]) > 0){
+                return 'Zurich';
+            } else {
+                return '';
+            }
+        }
+    }
+
+    public static function printRoomInSchool($event) {
+        if(isset($event[Resources::GROUP_EXTERNAL_LOCATIONS]) && count($event[Resources::GROUP_EXTERNAL_LOCATIONS]) > 0) {
+            return self::resourceNamePrinter($event, Resources::GROUP_EXTERNAL_LOCATIONS);
+        } else {
+            if(isset($event[Resources::GROUP_ROOMS_WINTERTHUR]) && count($event[Resources::GROUP_ROOMS_WINTERTHUR]) > 0) {
+                return self::resourceNamePrinter($event, Resources::GROUP_ROOMS_WINTERTHUR) . ', Winterthur';
+            } else if (isset($event[Resources::GROUP_ROOMS_ZURICH]) && count($event[Resources::GROUP_ROOMS_ZURICH]) > 0){
+                return self::resourceNamePrinter($event, Resources::GROUP_ROOMS_ZURICH) . ', Zurich';
+            } else {
+                return 'Room not assigned';
+            }
+        }
     }
 
     private static function resourceNamePrinter($event, $groupId, $onlyFirst = false, $separator = ', ') {
