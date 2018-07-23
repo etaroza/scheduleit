@@ -29,8 +29,10 @@ class Resources {
         $result = $this->api->getResources($groups);
         if ($result) {
             $this->resources = $result;
+            return $result;
         } else {
             // Nothing loaded
+            return false;
         }
     }
 

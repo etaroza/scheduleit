@@ -22,6 +22,16 @@ abstract class Controller {
         $this->init();
     }
 
+    public function getRepresentativeDate() {
+        $date = date("Y-m-d");
+        if(isset($_GET['date'])) {
+            $date = trim($_GET['date']);
+            $date = stripslashes($date);
+            $date = htmlspecialchars($date);
+        }
+        return $date;
+    }
+
     public abstract function init();
 }
 

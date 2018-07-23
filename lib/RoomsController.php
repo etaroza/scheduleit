@@ -78,15 +78,5 @@ class RoomsController extends Controller {
         $events =  $this->events->getEventsContainingResources(array_keys($rooms), $this->resources, true);
         return $events;
     }
-
-    public function getRepresentativeDate() {
-        $date = date("Y-m-d");
-        if(isset($_GET['date'])) {
-            $date = trim($_GET['date']);
-            $date = stripslashes($date);
-            $date = htmlspecialchars($date);
-        }
-        return $date;
-    }
 }
 

@@ -18,8 +18,10 @@ class Events {
         $result = $this->api->findEvents($owners, $from, $to);
         if ($result) {
             $this->events = $result;
+            return $result;
         } else {
             // Nothing loaded
+            return false;
         }
     }
 

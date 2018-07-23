@@ -247,8 +247,7 @@
                     <ul class="nav nav-pills">
                         <?php if (isset($_GET["email"])) { ?>
                             <li class="col-3 col-md-2 col-lg-1 nav-item align-self-center">
-                                <a id="jump-to-today-small" href="javascript:void(0)" class="d-md-none btn btn-outline-light">Today</a>
-                                <a id="jump-to-today" href="javascript:void(0)" class="d-none d-md-inline-block btn btn-outline-light">Today</a>
+                                <a id="jump-to-today" href="javascript:void(0)" class="btn btn-outline-light">Today</a>
                             </li>
                         <?php } ?>
                         <?php foreach ($uniqueMonth as $value) { ?>
