@@ -40,8 +40,8 @@ $uniqueMonths = array_unique($uniqueMonths);
 
   <body class="scroll-spy" data-spy="scroll" data-target="#navbar-months" data-offset="220">
 
-    <header>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light navbar-bg">
+    <header class="sticky-top <?php echo ($controller->getPersonId() ? 'mb-5' : '')?>">
+        <nav class="navbar navbar-expand-lg navbar-light navbar-bg">
             <div class="container">
                 <a class="navbar-brand d-md-none d-lg-none" href="https://www.vox-sprachschule.ch">
                     <img src="img/vox_bubble.png" alt="VOX-Sprachschule">
@@ -50,24 +50,36 @@ $uniqueMonths = array_unique($uniqueMonths);
                     <img src="img/vox-logo_250_71.jpg" alt="VOX-Sprachschule">
                 </a>
 
-                <?php if ($controller->getPersonId()) : ?>
-                    <div class="col">
-                        <div class="row">
-                            <div class="col">
-                                <div class="">
-                                    <select class="city-select" name="city-selector" id="city-select">
-                                        <option value="all" selected="">All</option>
-                                        <option value="zurich">Zurich</option>
-                                        <option value="winterthur">Winterthur</option>
-                                        <option value="external">External</option>
-                                    </select>
-                                </div>
+                <?php if ($controller->getPersonId() && $controller->didEventsLoadSuccessfully() && count($events) !== 0) : ?>
+                        <div class="col">
+                            <div class="row">
+                                <?php if ($controller->isTeacher()): ?>
+                                    <div class="col">
+                                        <div class="">
+                                            <select class="city-select" name="city-selector" id="city-select">
+                                                <option value="all" selected="">All</option>
+                                                <option value="zurich">Zurich</option>
+                                                <option value="winterthur">Winterthur</option>
+                                                <option value="external">External</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <span class="col-auto">
+                                        <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change <span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
+                                    </span>
+                                <?php endif ?>
+                                <?php if($controller->isCustomer()): ?>
+                                    <div class="col"></div>
+                                    <div class="col-auto text-center">
+                                        Please report mistakes to:<br>
+                                        <a class="blink" href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a>
+                                        <br>
+                                        +41 44 22 111 33
+                                    </div>
+
+                                <?php endif ?>
                             </div>
-                            <span class="col-auto">
-                                <a href="mailto:admin@vox-sprachschule.ch" class="btn btn-primary">Change<span class="d-none d-md-inline-block d-lg-inline-block">request</span></a>
-                            </span>
                         </div>
-                    </div>
                 <?php endif; ?>
             </div>
         </nav>
@@ -79,7 +91,7 @@ $uniqueMonths = array_unique($uniqueMonths);
     <main role="main" class="container">
         <?php if (!$controller->didEventsLoadSuccessfully()) { ?>
             <div class="row">
-                <div class="col-12 col-sm-10 col-lg-7">
+                <div class="col">
                     <div id="noTeacher" class="alert alert-warning" role="alert">
                         Schedule is currently unavailable, try again later.
                     </div>
@@ -87,18 +99,18 @@ $uniqueMonths = array_unique($uniqueMonths);
             </div>
         <?php } elseif (!($controller->isTeacher() || $controller->isCustomer())) { ?>
             <div class="row">
-                <div class="col-12 col-sm-10 col-lg-7">
+                <div class="col">
                     <div id="noTeacher" class="alert alert-danger" role="alert">
-                        Can't find a schedule for <?php echo $controller->getPersonEmail()?>. We probably have your wrong email,
+                        Can't find a schedule for <strong><?php echo $controller->getPersonEmail()?></strong>. We probably have your wrong email,
                         please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a> about this.
                     </div>
                 </div>
             </div>
         <?php } elseif (count($events) === 0) { ?>
             <div class="row">
-                <div class="col-12 col-sm-10 col-lg-7">
+                <div class="col">
                     <div id="noEvents" class="alert alert-warning" role="alert">
-                        No scheduled events for <?php echo $controller->getPersonEmail()?>. If you think that's wrong,
+                        No scheduled events for <strong><?php echo $controller->getPersonEmail()?></strong>. If you think that's wrong,
                         please inform <a href="mailto:admin@vox-sprachschule.ch">admin@vox-sprachschule.ch</a>.
                     </div>
                 </div>
@@ -194,7 +206,7 @@ $uniqueMonths = array_unique($uniqueMonths);
                 function scrollToEarliestEvent() {
                     if ($(".active-event:visible").first().length == 1){
                         jQuery("html, body").animate({
-                            scrollTop: jQuery(".active-event:visible").first().offset().top - 60
+                            scrollTop: jQuery(".active-event:visible").first().offset().top - $('.sticky-top').height() - 5
                         }, 300, "swing");
                     }
                 }
@@ -203,7 +215,7 @@ $uniqueMonths = array_unique($uniqueMonths);
 
                 $(".nav-link").click(function () {
                     $("html, body").animate({
-                        scrollTop: $($.attr(this, 'href')).offset().top - 60
+                        scrollTop: $($.attr(this, 'href')).offset().top - $('.sticky-top').height() - 5
                     }, 300, 'swing');
 
                     return false;
